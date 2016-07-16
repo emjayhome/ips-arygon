@@ -35,39 +35,39 @@
             // Diese Zeile nicht löschen
             parent::ApplyChanges();
 
-        //prüfen ob IO ein SerialPort ist
-        //        
-        // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
-        // Aber nie bei einem Neustart :)
-        if (IPS_GetKernelRunlevel() == KR_READY)
-        {
-            $ParentID = $this->GetParent();
-            if (!($ParentID === false))
+            //prüfen ob IO ein SerialPort ist
+            //        
+            // Zwangskonfiguration des SerialPort, wenn vorhanden und verbunden
+            // Aber nie bei einem Neustart :)
+            if (IPS_GetKernelRunlevel() == KR_READY)
             {
-                $ParentInstance = IPS_GetInstance($ParentID);
-                if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+                $ParentID = $this->GetParent();
+                if (!($ParentID === false))
                 {
-                    if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
-                        IPS_SetProperty($ParentID, 'StopBits', '1');
-                    if (IPS_GetProperty($ParentID, 'BaudRate') <> '9600')
-                        IPS_SetProperty($ParentID, 'BaudRate', '9600');
-                    if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
-                        IPS_SetProperty($ParentID, 'Parity', 'None');
-                    if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
-                        IPS_SetProperty($ParentID, 'DataBits', '8');
-                    if (IPS_HasChanges($ParentID))
-                        IPS_ApplyChanges($ParentID);
+                    $ParentInstance = IPS_GetInstance($ParentID);
+                    if ($ParentInstance['ModuleInfo']['ModuleID'] == '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}')
+                    {
+                        if (IPS_GetProperty($ParentID, 'StopBits') <> '1')
+                            IPS_SetProperty($ParentID, 'StopBits', '1');
+                        if (IPS_GetProperty($ParentID, 'BaudRate') <> '9600')
+                            IPS_SetProperty($ParentID, 'BaudRate', '9600');
+                        if (IPS_GetProperty($ParentID, 'Parity') <> 'None')
+                            IPS_SetProperty($ParentID, 'Parity', 'None');
+                        if (IPS_GetProperty($ParentID, 'DataBits') <> '8')
+                            IPS_SetProperty($ParentID, 'DataBits', '8');
+                        if (IPS_HasChanges($ParentID))
+                            IPS_ApplyChanges($ParentID);
+                    }
                 }
             }
-        }
-        try
-        {
-            $this->SenCommand("0asn");
-        } catch (Exception $exc)
-        {
-            if (IPS_GetKernelRunlevel() == KR_READY)
-                trigger_error($exc->getMessage(), $exc->getCode());
-        }
+            try
+            {
+                $this->SenCommand("0asn");
+            } catch (Exception $exc)
+            {
+                if (IPS_GetKernelRunlevel() == KR_READY)
+                    trigger_error($exc->getMessage(), $exc->getCode());
+            }
 
         }
  
@@ -103,13 +103,12 @@
             // Selbsterstellter Code
             return $this->SendCommand($cmd);
         }
-    }
 
-
-    private function GetParent()
-    {
-        $instance = @IPS_GetInstance($this->InstanceID);
-        return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
+        private function GetParent()
+        {
+            $instance = @IPS_GetInstance($this->InstanceID);
+            return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
+        }
     }
 
 ?>
