@@ -106,7 +106,7 @@
     }
 
 
-    protected function GetParent()
+    private function GetParent()
     {
         $instance = @IPS_GetInstance($this->InstanceID);
         return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
