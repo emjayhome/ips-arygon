@@ -206,7 +206,7 @@ if (@constant('IPS_BASE') == null) //Nur wenn Konstanten noch nicht bekannt sind
             }
             try
             {
-                $this->SenCommand("0asn");
+                $this->SendCommand("0asn");
             } catch (Exception $exc)
             {
                 if (IPS_GetKernelRunlevel() == KR_READY)
