@@ -248,7 +248,19 @@ if (@constant('IPS_BASE') == null) //Nur wenn Konstanten noch nicht bekannt sind
             return $this->SendCommand($cmd);
         }
 
-        private function GetParent()
+        protected function HasActiveParent()
+        {
+            $instance = @IPS_GetInstance($this->InstanceID);
+            if ($instance['ConnectionID'] > 0)
+            {
+                $parent = IPS_GetInstance($instance['ConnectionID']);
+                if ($parent['InstanceStatus'] == 102)
+                    return true;
+            }
+            return false;
+        }
+
+        protected function GetParent()
         {
             $instance = @IPS_GetInstance($this->InstanceID);
             return ($instance['ConnectionID'] > 0) ? $instance['ConnectionID'] : false;
