@@ -60,7 +60,7 @@ class ArygonSplitter extends IPSModule {
         $Command = new ArygonCommandASCII();
         $Command->GetDataFromJSONObject($Data);
         try {
-            $this->ForwardDataFromChild($Command);
+            $this->ForwardCommandFromChild($Command);
             
         } catch (Exception $ex) {
             trigger_error($ex->getMessage(), $ex->getCode());
