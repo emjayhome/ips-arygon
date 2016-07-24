@@ -2,7 +2,7 @@
 
 // IPS Messages
 if (@constant('IPS_BASE') == null) { // Check whether already defined
-{
+    
     // BASE MESSAGE
     define('IPS_BASE', 10000);                              // Kernel Base Message
     define('IPS_MODULBASE', 20000);                         // Module Base Message
