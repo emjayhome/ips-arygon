@@ -33,11 +33,10 @@ class ArygonCommandASCII {
 }
 
 class ArygonResponseASCII {
-    private $ASCIIResponse;
-    private $HexResponse;
+    private $Response;
 
     public function GetErrorCode() {
-        return $this->HexResponse[1];
+        return hexdec(substr($this->Response, 0, 2));
     }
 
     public function GetSubErrorCode() {
@@ -57,18 +56,17 @@ class ArygonResponseASCII {
     }
 
     public function SetResponse($RawData) {
-        $this->ASCIIResponse = $RawData;
-        $this->HexResponse = hex2bin($this->ASCIIResponse);
+        $this->Response = $RawData;
     }
 
     public function GetDataFromJSONObject($Data) {
-        $this->RawResponse = $Data->RawResponse;
-        $this->HexResponse = hex2bin($this->ASCIIResponse);
+        $this->Response = utf8_decode($Data->Response);
     }
 
     public function ToJSONString($GUID) {
         $SendData = new stdClass;
-        $SendData->RawResponse = bin2hex($this->HexResponse);
+        $SendData->DataID = $GUID;
+        $SendData->Response = utf8_encode($this->Response);
         return json_encode($SendData);
     }
 

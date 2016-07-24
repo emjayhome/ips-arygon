@@ -98,22 +98,19 @@ class ArygonSplitter extends IPSModule {
         $data = json_decode($JSONString);
         
         $this->CheckParents();
-        
-        if ($this->Mode === false) {
-            trigger_error("Wrong IO-Parent", E_USER_WARNING);
-            return false;
-        }
 
         $bufferID = $this->GetIDForIdent("BufferIn");
         
         if (!$this->lock("ReceiveLock")) {
-            trigger_error("ReceiveBuffer is locked", E_USER_NOTICE);
+            trigger_error("ReceiveBuffer is locked.", E_USER_NOTICE);
             return false;
         }
 
         $head = GetValueString($bufferID);
         SetValueString($bufferID, '');
         $stream = $head . utf8_decode($data->Buffer);
+
+        IPS_LogMessage('ArygonSplitter', 'Stream: ' . $stream);    
 
         $minTail = 8;
         $start = strpos($stream, 'FF');
