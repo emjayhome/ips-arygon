@@ -106,22 +106,20 @@ class ArygonDevice extends IPSModule {
         $Command->SetCommand('av');
         try {
             $result = $this->Send($Command, true);
+            IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
         } catch (Exception $exc) {
                 unset($exc);
         }
-
-        IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
 
         // Get the unique serial number of the reader
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('asn');
         try {
             $result = $this->Send($Command, true);
+            IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
         } catch (Exception $exc) {
                 unset($exc);
-        }
-
-        IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());       
+        }     
 
     }
 
