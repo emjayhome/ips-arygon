@@ -5,15 +5,15 @@
         private $Command = '';
         private $Data = '';
 
-        public GetCommand() {
+        public function GetCommand() {
             return $Mode . $Command . $Data;
         }
 
-        public SetCommand($cmd) {
+        public function SetCommand($cmd) {
             $this->Command = $cmd;
         }
 
-        public SetData($data) {
+        public function SetData($data) {
             $this->Data = $data;
         }
 
