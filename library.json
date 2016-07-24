@@ -1,9 +1,9 @@
 {  
 "id": "{82BBE93B-3B29-40AE-ABE4-E6EA8D3BC649}",  
 "author": "EmJayHome",  
-"name": "RFID Readers",  
-"url": "https://github.com/emjayhome/ips-rfid",  
+"name": "Arygon RFID Reader Modules for IP Symcon",  
+"url": "https://github.com/emjayhome/ips-arygon",  
 "version": "1.0",  
-"build": 0,  
+"build": 1,  
 "date": 1468668792 
 }
