@@ -71,6 +71,7 @@ class ArygonSplitter extends IPSModule {
     // Forward command from child (device) to parent (serial interface)
     private function ForwardCommandFromChild(ArygonCommandASCII $Command) {
         if (!$this->CheckParents()) {
+            IPS_LogMessage('ArygonSplitter', 'No active parent.');
             throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         }
 
