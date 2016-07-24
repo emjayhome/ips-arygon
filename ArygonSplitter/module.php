@@ -132,7 +132,7 @@ class ArygonSplitter extends IPSModule {
             $stream = substr($stream, 0, $end);
         }
 
-        if(strlen($stream) < $minTail)) {
+        if(strlen($stream) < $minTail) {
             IPS_LogMessage('Arygon Splitter', 'Response Packet too short');
             $this->unlock("ReceiveLock");
             return;
