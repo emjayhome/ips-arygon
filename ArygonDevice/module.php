@@ -88,7 +88,7 @@ class ArygonDevice extends IPSModule {
     // Reinitialize reader
     public function ResetReader() {
 
-        IPS_LogMessage('ArygonDevice', 'ResetReader');
+        IPS_LogMessage('ArygonDevice', 'Reset reader ...');
 
         // Initiate uC software reset (TAMA is reset as well)
         $Command = new ArygonCommandASCII();
@@ -99,6 +99,8 @@ class ArygonDevice extends IPSModule {
                 unset($exc);
         }
 
+        IPS_LogMessage('ArygonDevice', 'Reset OK');
+
         // Get uC firmware version
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('av');
@@ -106,7 +108,9 @@ class ArygonDevice extends IPSModule {
             $result = $this->Send($Command, true);
         } catch (Exception $exc) {
                 unset($exc);
-        } 
+        }
+
+        IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
 
         // Get the unique serial number of the reader
         $Command = new ArygonCommandASCII();
@@ -115,7 +119,9 @@ class ArygonDevice extends IPSModule {
             $result = $this->Send($Command, true);
         } catch (Exception $exc) {
                 unset($exc);
-        }           
+        }
+
+        IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());       
 
     }
 
@@ -172,7 +178,7 @@ class ArygonDevice extends IPSModule {
     // Command/response protocol - wait for response
     private function WaitForResponse() {
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
-        for ($i = 0; $i < 300; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             if (GetValueString($ResponseDataID) === '') {
                 IPS_Sleep(50);
             } else {

@@ -35,20 +35,27 @@ class ArygonCommandASCII {
 class ArygonResponseASCII {
     private $Response;
 
+    public function IsOK() {
+        if($this->GetErrorCode() == 0) {
+            return true;
+        }
+        return false;
+    }
+
     public function GetErrorCode() {
-        return hexdec(substr($this->Response, 0, 2));
+        return hexdec(substr($this->Response, 2, 2));
     }
 
     public function GetSubErrorCode() {
-        return $this->HexResponse[2];
+        return hexdec(substr($this->Response, 4, 2));
     }
 
     public function  GetUserDataLength() {
-        return $this->HexResponse[3];
+        return hexdec(substr($this->Response, 6, 2));
     }
 
     public function GetUserData() {
-        return '';
+        return substr($this->Response, 8, $this->GetUserDataLength);
     }
 
     public function GetRawResponse() {
