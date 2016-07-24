@@ -120,7 +120,7 @@ class ArygonDevice extends IPSModule {
     }
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
-        IPS_LogMessage('ArygonDevice', $Command->ToJSONString);
+        IPS_LogMessage('ArygonDevice', $Command->ToJSONString('Test'));
         if (!$this->HasActiveParent()) {
             throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         }
