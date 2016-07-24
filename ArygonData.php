@@ -49,7 +49,7 @@
         }
 
         public function GetUserData() {
-            return substr($RawResponse, );
+            return '';
         }
 
         public function GetRawResponse() {
