@@ -95,6 +95,7 @@ class ArygonSplitter extends IPSModule {
     // IPS raw data iterface for parent (serial interface) to child (device) forwarding
     public function ReceiveData($JSONString)
     {
+        IPS_LogMessage('ArygonSplitter', $JSONString);
         $data = json_decode($JSONString);
         
         $this->CheckParents();
@@ -152,6 +153,7 @@ class ArygonSplitter extends IPSModule {
     // Forward response from parent (serial interface) to child (device)
     private function SendResponseToChild(ArygonResponseASCII $Response) {
         $Data = $Response->ToJSONString('{43E4B48E-2345-4A9A-B506-3E8E7A964757}');
+        IPS_LogMessage('ArygonSplitter', $Data);
         IPS_SendDataToChildren($this->InstanceID, $Data);
     }
 
