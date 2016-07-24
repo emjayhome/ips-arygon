@@ -1,0 +1,15 @@
+{
+    "elements":
+    [
+    ],
+    "actions":
+    [
+        { "type": "Button", "label": "Beep", "onClick": "ADRA_SendBeep($id);" },
+        { "type": "Button", "label": "Reset", "onClick": "ADRA_Reset($id);" }
+    ],
+    "status":
+    [
+        { "code": 102, "icon": "active", "caption": "Module OK" },
+        { "code": 201, "icon": "error", "caption": "Module error" },
+    ]
+}

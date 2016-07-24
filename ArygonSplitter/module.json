@@ -1,0 +1,14 @@
+{
+    "id": "{2F75DC6B-F9AA-4A2E-B121-F76FBC365566}",
+    "name": "ArygonSplitter",
+    "type": 2,
+    "vendor": "Arygon",
+    "aliases":
+    [
+        "Arygon ADRA Splitter"
+    ],  
+    "parentRequirements": ["{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"],
+    "childRequirements": ["{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}"],
+    "implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}"],
+    "prefix": "ADRAS"
+}
