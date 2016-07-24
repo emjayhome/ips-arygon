@@ -53,17 +53,13 @@ class ArygonSplitter extends IPSModule {
     // IPS raw data iterface for child (device) to parent (serial interface) forwarding
     public function ForwardData($JSONString) {
         $Data = json_decode($JSONString);
-        IPS_LogMessage('ArygonSplitter', $JSONString);
         if ($Data->DataID <> "{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}") {
             return false;
         }
         $Command = new ArygonCommandASCII();
         $Command->GetDataFromJSONObject($Data);
-        $test = $Command->ToJSONString('TestString');
-        IPS_LogMessage('ArygonSplitter', $test);
         try {
             $this->ForwardCommandFromChild($Command);
-            
         } catch (Exception $ex) {
             trigger_error($ex->getMessage(), $ex->getCode());
             return false;
@@ -78,8 +74,9 @@ class ArygonSplitter extends IPSModule {
             throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         }
 
+        $test = $Command->ToJSONString('TestString');
         $Raw = $Command->GetCommand();
-        IPS_LogMessage('ArygonSplitter', 'Command: ' . $Raw);
+        IPS_LogMessage('ArygonSplitter', 'Command: ' . $test);
 
         if (!$this->lock("ToParent")) {
             throw new Exception("Can not send to Parent", E_USER_NOTICE);
