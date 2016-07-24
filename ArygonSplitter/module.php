@@ -73,6 +73,8 @@ class ArygonSplitter extends IPSModule {
             throw new Exception("Instance has no active parent.", E_USER_NOTICE);
         }
 
+        $bufferID = $this->GetIDForIdent("BufferIn");
+        SetValueString($bufferID, '');
         $Raw = $Command->GetCommand();
         IPS_LogMessage('ArygonSplitter', 'Command: ' . $Raw);
 
@@ -110,8 +112,6 @@ class ArygonSplitter extends IPSModule {
         SetValueString($bufferID, '');
         $stream = $head . utf8_decode($data->Buffer);
 
-        IPS_LogMessage('ArygonSplitter', 'Stream: ' . $stream);    
-
         $minLength = 10;
         $dataResponse = true;
         if(strlen($stream) < $minLength) {
@@ -121,9 +121,10 @@ class ArygonSplitter extends IPSModule {
         }
         $start = strpos($stream, 'FF');
         if ($start === false) {
+            IPS_LogMessage('Arygon Splitter', 'Response packet without FF.');
             $dataResonse = false;
         } elseif ($start > 0) {
-            IPS_LogMessage('Arygon Splitter', 'Response Packet did not start with FF');
+            IPS_LogMessage('Arygon Splitter', 'Response packet did not start with FF.');
             $stream = substr($stream, $start);
         }
         $end = strpos($stream, '\r\n');
@@ -143,7 +144,6 @@ class ArygonSplitter extends IPSModule {
             $this->SendResponseToChild($Response);
         }
 
-        SetValueString($bufferID, '');
         return true;
     }
 
