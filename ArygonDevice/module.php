@@ -162,6 +162,7 @@ class ArygonDevice extends IPSModule {
 
     protected function SendDataToParent($Data) {
         $JSONString = $Data->ToJSONString('{8F47273A-0B69-489E-AF36-F391AE5FBEC0}');
+        IPS_LogMessage('ArygonData', $JSONString);
         return @IPS_SendDataToParent($this->InstanceID, $JSONString);
     }
 
