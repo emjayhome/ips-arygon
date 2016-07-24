@@ -6,7 +6,7 @@ class ArygonCommandASCII {
     private $Data = '';
 
     public function GetCommand() {
-        return $Mode . $Command . $Data;
+        return $this->Mode . $this->Command . $this->Data;
     }
 
     public function SetCommand($cmd) {
@@ -18,15 +18,15 @@ class ArygonCommandASCII {
     }
 
     public function GetDataFromJSONObject($Data) {
-        $this->Command = $Data->Command;
-        $this->Data = $Data->Data;
+        $this->Command = utf8_decode($Data->Command);
+        $this->Data = utf8_decode($Data->Data);
     }
 
     public function ToJSONString($GUID) {
         $SendData = new stdClass;
         $SendData->DataID = $GUID;
-        $SendData->Command = $this->Command;
-        $SendData->Data = $this->Data;
+        $SendData->Command = utf8_encode($this->Command);
+        $SendData->Data = utf8_encode($this->Data);
         return json_encode($SendData);
     }
 

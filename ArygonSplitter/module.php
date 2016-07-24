@@ -9,14 +9,11 @@ class ArygonSplitter extends IPSModule {
     public function Create() {
         parent::Create();
         $this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
-        IPS_LogMessage('ArygonSplitter', 'Create');
     }
 
     public function ApplyChanges() {
         parent::ApplyChanges();
         $this->RegisterVariableString("BufferIn", "BufferIn", "", -1);
-        $this->RegisterVariableString("CommandOut", "CommandOut", "", -2);
-        IPS_SetHidden($this->GetIDForIdent('CommandOut'), true);
         IPS_SetHidden($this->GetIDForIdent('BufferIn'), true);
     }
 
@@ -26,7 +23,7 @@ class ArygonSplitter extends IPSModule {
             $instance = IPS_GetInstance($this->InstanceID);
             $parentGUID = IPS_GetInstance($instance['ConnectionID'])['ModuleInfo']['ModuleID'];
             if ($parentGUID != '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}') {
-                IPS_LogMessage('Arygon Splitter', 'IO-Parent not supported.');
+                IPS_LogMessage('Arygon Splitter', 'Parent not supported.');
                 $result = false;
             }
         }
@@ -41,6 +38,7 @@ class ArygonSplitter extends IPSModule {
                 return true;
             }
         }
+        IPS_LogMessage('ArygonSplitter', 'No active parent.');
         return false;
     }
 
@@ -54,6 +52,7 @@ class ArygonSplitter extends IPSModule {
     public function ForwardData($JSONString) {
         $Data = json_decode($JSONString);
         if ($Data->DataID <> "{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}") {
+            IPS_LogMessage('ArygonSplitter', 'Received unsupported data from child.');
             return false;
         }
         $Command = new ArygonCommandASCII();
@@ -62,6 +61,7 @@ class ArygonSplitter extends IPSModule {
             $this->ForwardCommandFromChild($Command);
         } catch (Exception $ex) {
             trigger_error($ex->getMessage(), $ex->getCode());
+            IPS_LogMessage('ArygonSplitter', 'Exception: ' . $ex->getMessage());
             return false;
         }
         return true;
@@ -70,16 +70,14 @@ class ArygonSplitter extends IPSModule {
     // Forward command from child (device) to parent (serial interface)
     private function ForwardCommandFromChild(ArygonCommandASCII $Command) {
         if (!$this->CheckParents()) {
-            IPS_LogMessage('ArygonSplitter', 'No active parent.');
-            throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
+            throw new Exception("Instance has no active parent.", E_USER_NOTICE);
         }
 
-        $test = $Command->ToJSONString('TestString');
         $Raw = $Command->GetCommand();
-        IPS_LogMessage('ArygonSplitter', 'Command: ' . $test);
+        IPS_LogMessage('ArygonSplitter', 'Command: ' . $Raw);
 
         if (!$this->lock("ToParent")) {
-            throw new Exception("Can not send to Parent", E_USER_NOTICE);
+            throw new Exception("Can not send to parent.", E_USER_NOTICE);
         }
 
         try {
