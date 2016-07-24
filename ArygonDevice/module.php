@@ -96,7 +96,8 @@ class ArygonDevice extends IPSModule {
         try {
             $this->Send($Command, true);
         } catch (Exception $exc) {
-                unset($exc);
+            IPS_LogMessage('ArygonData', 'Exception: ' . $ex->getMessage());
+            unset($exc);
         }
 
         IPS_LogMessage('ArygonDevice', 'Reset OK');
@@ -108,7 +109,8 @@ class ArygonDevice extends IPSModule {
             $result = $this->Send($Command, true);
             IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
         } catch (Exception $exc) {
-                unset($exc);
+            IPS_LogMessage('ArygonData', 'Exception: ' . $ex->getMessage());
+            unset($exc);
         }
 
         // Get the unique serial number of the reader
@@ -118,7 +120,8 @@ class ArygonDevice extends IPSModule {
             $result = $this->Send($Command, true);
             IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
         } catch (Exception $exc) {
-                unset($exc);
+            IPS_LogMessage('ArygonData', 'Exception: ' . $ex->getMessage());
+            unset($exc);
         }     
 
     }
