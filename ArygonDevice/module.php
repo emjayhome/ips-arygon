@@ -85,6 +85,8 @@ class ArygonDevice extends IPSModule {
     // Reinitialize reader
     public function ResetReader() {
 
+        IPS_LogMessage('ArygonDevice', 'ResetReader');
+
         // Initiate uC software reset (TAMA is reset as well)
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('au');
@@ -118,6 +120,7 @@ class ArygonDevice extends IPSModule {
     }
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
+        IPS_LogMessage('ArygonDevice', $Command->ToJSONString);
         if (!$this->HasActiveParent()) {
             throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         }
