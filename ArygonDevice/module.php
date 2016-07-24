@@ -174,7 +174,7 @@ class ArygonDevice extends IPSModule {
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         for ($i = 0; $i < 300; $i++) {
             if (GetValueString($ResponseDataID) === '') {
-                IPS_Sleep(5);
+                IPS_Sleep(50);
             } else {
                 if ($this->lock('ResponseData')) {
                     $ret = GetValueString($ResponseDataID);
