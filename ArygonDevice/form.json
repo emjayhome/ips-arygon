@@ -4,8 +4,8 @@
     ],
     "actions":
     [
-        { "type": "Button", "label": "Beep", "onClick": "ADRA_SendBeep($id);" },
-        { "type": "Button", "label": "Reset", "onClick": "ADRA_Reset($id);" }
+        { "type": "Button", "label": "Test Beep", "onClick": "ADRA_SendBeep($id);" },
+        { "type": "Button", "label": "Reset Reader", "onClick": "ADRA_ResetReader($id);" }
     ],
     "status":
     [
