@@ -53,7 +53,7 @@ class ArygonSplitter extends IPSModule {
     // IPS raw data iterface for child (device) to parent (serial interface) forwarding
     public function ForwardData($JSONString) {
         $Data = json_decode($JSONString);
-        IPS_LogMessage('ArygonSplitter', $Data);
+        IPS_LogMessage('ArygonSplitter', $JSONString);
         if ($Data->DataID <> "{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}") {
             return false;
         }
