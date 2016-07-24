@@ -112,11 +112,16 @@ class ArygonSplitter extends IPSModule {
 
         IPS_LogMessage('ArygonSplitter', 'Stream: ' . $stream);    
 
-        $minTail = 8;
+        $minLength = 10;
+        $dataResponse = true;
+        if(strlen($stream) < $minLength) {
+            SetValueString($bufferID, $stream);
+            $this->unlock("ReceiveLock");
+            return;            
+        }
         $start = strpos($stream, 'FF');
         if ($start === false) {
-            IPS_LogMessage('Arygon Splitter', 'Response Packet without FF');
-            $stream = '';
+            $dataResonse = false;
         } elseif ($start > 0) {
             IPS_LogMessage('Arygon Splitter', 'Response Packet did not start with FF');
             $stream = substr($stream, $start);
@@ -130,18 +135,13 @@ class ArygonSplitter extends IPSModule {
             $stream = substr($stream, 0, $end);
         }
 
-        if(strlen($stream) < $minTail) {
-            IPS_LogMessage('Arygon Splitter', 'Response Packet too short');
-            $this->unlock("ReceiveLock");
-            return;
-        }
-
         $this->unlock("ReceiveLock");
 
-        $Response = new ArygonResponseASCII();
-        $Response->SetResponse($stream);
-        $this->SendResponseToChild($Response);
-        IPS_LogMessage('ArygonSplitter', 'Response: ' . $stream);
+        if ($dataResonse) {   
+            $Response = new ArygonResponseASCII();
+            $Response->SetResponse($stream);
+            $this->SendResponseToChild($Response);
+        }
 
         return true;
     }
