@@ -96,7 +96,7 @@ class ArygonDevice extends IPSModule {
         try {
             $this->Send($Command, true);
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $ex->getMessage());
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
             unset($exc);
         }
 
@@ -109,7 +109,7 @@ class ArygonDevice extends IPSModule {
             $result = $this->Send($Command, true);
             IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $ex->getMessage());
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
             unset($exc);
         }
 
@@ -120,7 +120,7 @@ class ArygonDevice extends IPSModule {
             $result = $this->Send($Command, true);
             IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $ex->getMessage());
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
             unset($exc);
         }     
 
