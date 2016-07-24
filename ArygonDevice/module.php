@@ -30,10 +30,11 @@ class ArygonDevice extends IPSModule {
         $instance = IPS_GetInstance($this->InstanceID);
         if ($instance['ConnectionID'] > 0) {
             $parent = IPS_GetInstance($instance['ConnectionID']);
-            if ($parent['InstanceStatus'] == IS_ACTIVE) {
+            if ($parent['InstanceStatus'] == 102) {
                 return true;
             }
         }
+        IPS_LogMessage('ArygonDevice', $parent['InstanceStatus']);
         return false;
     }
 
