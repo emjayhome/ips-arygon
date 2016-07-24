@@ -143,6 +143,7 @@ class ArygonSplitter extends IPSModule {
             $this->SendResponseToChild($Response);
         }
 
+        SetValueString($bufferID, '');
         return true;
     }
 
