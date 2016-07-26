@@ -129,7 +129,7 @@ class ArygonDevice extends IPSModule {
         // Buzzer: Port 0 -> output
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apc');
-        $Command->SetData('0000')
+        $Command->SetData('0000');
         try {
             $result = $this->Send($Command, true); 
         } catch (Exception $exc) {
@@ -140,7 +140,7 @@ class ArygonDevice extends IPSModule {
         // Red LED: Port 2 -> output
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apc');
-        $Command->SetData('0200')
+        $Command->SetData('0200');
         try {
             $result = $this->Send($Command, true); 
         } catch (Exception $exc) {
@@ -151,7 +151,7 @@ class ArygonDevice extends IPSModule {
         // Green LED: Port 6 -> output
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apc');
-        $Command->SetData('0600')
+        $Command->SetData('0600');
         try {
             $result = $this->Send($Command, true); 
         } catch (Exception $exc) {
