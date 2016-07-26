@@ -94,13 +94,12 @@ class ArygonDevice extends IPSModule {
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('au');
         try {
-            $this->Send($Command, false);
+            $this->Send($Command, true);
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
             unset($exc);
         }
 
-        IPS_Sleep(1000);
         IPS_LogMessage('ArygonDevice', 'Reset OK');
 
         // Get uC firmware version
