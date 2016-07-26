@@ -153,7 +153,7 @@ class ArygonSplitter extends IPSModule {
 
     // Forward response from parent (serial interface) to child (device)
     private function SendResponseToChild(ArygonResponseASCII $Response) {
-        $Data = $Response->ToJSONString('{43E4B48E-2345-4A9A-B506-3E8E7A964757}');
+        $Data = $Response->ToJSONString('{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}');
         IPS_LogMessage('ArygonSplitter', $Data);
         IPS_SendDataToChildren($this->InstanceID, $Data);
     }
