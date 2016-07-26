@@ -81,6 +81,7 @@ class ArygonDevice extends IPSModule {
         if (!$this->lock('ResponseData')) {
             throw new Exception('ResponseData is locked', E_USER_NOTICE);
         }
+        $ResponseDataID = $this->GetIDForIdent('ResponseData');
         SetValueString($ResponseDataID, $Response->GetRawResponse());
         $this->unlock('ResponseData');
     }

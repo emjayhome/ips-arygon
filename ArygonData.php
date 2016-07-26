@@ -59,7 +59,7 @@ class ArygonResponseASCII {
     }
 
     public function GetRawResponse() {
-        return $this->ASCIIResponse;
+        return $this->Response;
     }
 
     public function SetResponse($RawData) {
