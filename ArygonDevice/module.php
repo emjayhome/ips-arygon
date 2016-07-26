@@ -123,7 +123,74 @@ class ArygonDevice extends IPSModule {
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
             unset($exc);
-        }     
+        } 
+
+        // Configuration of the GPIO pins
+        // Buzzer: Port 0 -> output
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('0apc0000');
+        try {
+            $result = $this->Send($Command, true); 
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }           
+
+        // Red LED: Port 2 -> output
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('0apc0200');
+        try {
+            $result = $this->Send($Command, true); 
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }  
+
+        // Green LED: Port 6 -> output
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('0apc0600');
+        try {
+            $result = $this->Send($Command, true); 
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }
+
+    }
+
+    public function PowerDown() {
+
+        IPS_LogMessage('ArygonDevice', 'Power down ...');
+
+        // Power down mode (sleep)
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('asl');
+        try {
+            $this->Send($Command, true);
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }
+
+        IPS_LogMessage('ArygonDevice', 'Power down OK');
+
+    }
+
+    public function PollCard() {
+
+        IPS_LogMessage('ArygonDevice', 'Polling for card ...');
+
+        // Select a single card/tag
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('s');
+        try {
+            $this->Send($Command, true);
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }
+
+        IPS_LogMessage('ArygonDevice', 'Start polling OK');
 
     }
 

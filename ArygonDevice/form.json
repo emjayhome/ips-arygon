@@ -6,6 +6,8 @@
     [
         { "type": "Button", "label": "Test Beep", "onClick": "ADRA_SendBeep($id);" },
         { "type": "Button", "label": "Reset Reader", "onClick": "ADRA_ResetReader($id);" }
+        { "type": "Button", "label": "Power Down", "onClick": "ADRA_PowerDown($id);" }
+        { "type": "Button", "label": "Poll", "onClick": "ADRA_PollCard($id);" }
     ],
     "status":
     [
