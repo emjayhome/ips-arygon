@@ -133,6 +133,7 @@ class ArygonSplitter extends IPSModule {
             $this->unlock("ReceiveLock");
             return;
         } else {
+            IPS_LogMessage('ArygonSplitter', 'Found end: ' . $stream);
             $stream = substr($stream, 0, $end);
         }
 
