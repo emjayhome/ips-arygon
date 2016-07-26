@@ -129,7 +129,7 @@ class ArygonSplitter extends IPSModule {
             IPS_LogMessage('Arygon Splitter', 'Response packet did not start with FF.');
             $stream = substr($stream, $start);
         }
-        $end = strpos(stream, "\r\n");
+        $end = strpos($stream, "\r\n");
         IPS_LogMessage('ArygonSplitter', 'End: ' . $end);
         if ($end === false) {
             SetValueString($bufferID, $stream);
