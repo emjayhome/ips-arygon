@@ -78,7 +78,7 @@ class ArygonDevice extends IPSModule {
         $Response = new ArygonResponseASCII();
         $Response->GetDataFromJSONObject($ResponseData);
         IPS_LogMessage('ArygonDevice', 'Response Length = ' . $Resonse->GetUserDataLength() . ' User Data = ' . $Response->GetUserData());
-        if(($Resonse->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
+        if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length);
             IPS_LogMessage('ArygonDevice', 'Response is UID with length ' .$length . ' 0x' . $uid);
