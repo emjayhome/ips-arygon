@@ -197,6 +197,32 @@ class ArygonDevice extends IPSModule {
 
     }
 
+    public function Beep() {
+
+        // Buzzer: Port 0 -> high
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('apw');
+        $Command->SetData('0001');
+        try {
+            $result = $this->Send($Command, true); 
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }
+
+       // Buzzer: Port 0 -> low
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('apw');
+        $Command->SetData('0000');
+        try {
+            $result = $this->Send($Command, true); 
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            unset($exc);
+        }
+
+    }
+
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
         IPS_LogMessage('ArygonDevice', $Command->ToJSONString('Test'));
         if (!$this->HasActiveParent()) {
