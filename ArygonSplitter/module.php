@@ -129,14 +129,15 @@ class ArygonSplitter extends IPSModule {
             IPS_LogMessage('Arygon Splitter', 'Response packet did not start with FF.');
             $stream = substr($stream, $start);
         }
-        $end = strpos($stream, '\r\n');
+        $end = strpos($JSONString, '\r\n'); // \r\n are removed by json_decode so we need to search for dem in the raw input
+        IPS_LogMessage('ArygonSplitter', 'End: ' . $end);
         if ($end === false) {
             SetValueString($bufferID, $stream);
             $this->unlock("ReceiveLock");
             return;
         } else {
             IPS_LogMessage('ArygonSplitter', 'Found end: ' . $stream);
-            $stream = substr($stream, 0, $end);
+            //$stream = substr($stream, 0, $end);
         }
 
         $this->unlock("ReceiveLock");
