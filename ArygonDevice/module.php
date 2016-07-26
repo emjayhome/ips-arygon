@@ -70,7 +70,7 @@ class ArygonDevice extends IPSModule {
     // IPS raw data iterface for parent (splitter)
     public function ReceiveData($JSONString) {
         $ResponseData = json_decode($JSONString);
-
+        IPS_LogMessage('ArygonDevice', 'Response: ' . $JSONString);
         if ($ResponseData->DataID <> '{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}') {
             return false;
         }
