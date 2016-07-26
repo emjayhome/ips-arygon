@@ -55,7 +55,7 @@ class ArygonResponseASCII {
     }
 
     public function GetUserData() {
-        return substr($this->Response, 8, $this->GetUserDataLength);
+        return substr($this->Response, 8, $this->GetUserDataLength());
     }
 
     public function GetRawResponse() {

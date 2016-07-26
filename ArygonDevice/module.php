@@ -188,9 +188,8 @@ class ArygonDevice extends IPSModule {
                     $ret = GetValueString($ResponseDataID);
                     SetValueString($ResponseDataID, '');
                     $this->unlock('ResponseData');
-                    $JSON = json_decode($ret);
                     $Response = new ArygonResponseASCII();
-                    $Response->GetDataFromJSONObject($JSON);
+                    $Response->SetResponse($ret);
                     return $Response;
                 }
             }
