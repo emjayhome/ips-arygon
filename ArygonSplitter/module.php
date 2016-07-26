@@ -108,6 +108,7 @@ class ArygonSplitter extends IPSModule {
             return false;
         }
 
+        IPS_LogMessage('ArygonSplitter', 'New Raw Stream: ' . $data->Buffer);
         $head = GetValueString($bufferID);
         SetValueString($bufferID, '');
         $stream = $head . utf8_decode($data->Buffer);
