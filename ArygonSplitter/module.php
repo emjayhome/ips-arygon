@@ -130,7 +130,7 @@ class ArygonSplitter extends IPSModule {
             $stream = substr($stream, $start);
         }
         $end = strpos($JSONString, '\r\n'); // \r\n are removed by json_decode so we need to search for dem in the raw input
-        IPS_LogMessage('ArygonSplitter', 'End: ' . $end);
+        IPS_LogMessage('ArygonSplitter', 'End: ' . $end . ' Total: ' . strlen($JSONString));
         if ($end === false) {
             SetValueString($bufferID, $stream);
             $this->unlock("ReceiveLock");
@@ -142,7 +142,7 @@ class ArygonSplitter extends IPSModule {
 
         $this->unlock("ReceiveLock");
 
-        if ($dataResonse) {   
+        if ($dataResponse) {   
             $Response = new ArygonResponseASCII();
             $Response->SetResponse($stream);
             $this->SendResponseToChild($Response);
