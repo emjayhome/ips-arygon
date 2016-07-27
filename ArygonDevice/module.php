@@ -294,7 +294,7 @@ class ArygonDevice extends IPSModule {
             unset($exc);
         }
 
-        IPS_Sleep(200);
+        IPS_Sleep(100);
 
        // Buzzer: Port 0 -> low
         $Command = new ArygonCommandASCII();
