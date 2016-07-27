@@ -1,5 +1,13 @@
 <?
 
+class ArygonDeviceState {
+    const Inactive = 0;
+    const Idle = 1;
+    const Error = 2;
+    const Beep = 3;
+
+}
+
 class ArygonCommandASCII {
     private $Mode = '0';
     private $Command = '';
