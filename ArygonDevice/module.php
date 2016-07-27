@@ -5,7 +5,7 @@ require_once(__DIR__ . "/../IpsIncludes.php");
 
 class ArygonDevice extends IPSModule {
 
-    private $DeviceState = ArygonDeviceStates::Inactive;
+    private $DeviceState = ArygonDeviceState::Inactive;
 
     // IPS module functions
 
@@ -313,13 +313,13 @@ class ArygonDevice extends IPSModule {
 
         $this->RegisterTimer('Beep', 1000, 'ADRA_Beep($_IPS[\'TARGET\']);');     
 
-        $DeviceState = ArygonDeviceStates::Beep;
+        $DeviceState = ArygonDeviceState::Beep;
 
     }
 
     public function BeepOff() {
         $this->UnregisterTimer('Beep');
-        $DeviceState = ArygonDeviceStates::Idle;
+        $DeviceState = ArygonDeviceState::Idle;
     }
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
