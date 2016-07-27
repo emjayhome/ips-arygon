@@ -311,7 +311,7 @@ class ArygonDevice extends IPSModule {
 
     public function ContinuousBeep() {
 
-        $this->RegisterTimer('Beep', 1000, 'ADRA_Beep($_IPS[\'TARGET\']);');     
+        $this->RegisterTimer('Beep', 1, 'ADRA_Beep($_IPS[\'TARGET\']);');     
 
         $DeviceState = ArygonDeviceState::Beep;
 
