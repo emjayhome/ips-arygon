@@ -5,8 +5,9 @@
     "actions":
     [
         { "type": "Button", "label": "Single Beep", "onClick": "ADRA_Beep($id);" },
+        { "type": "Button", "label": "Double Beep", "onClick": "ADRA_DoubleBeep($id);" },
         { "type": "Button", "label": "Start Continuous Beep", "onClick": "ADRA_StartContinuousBeep($id);" },
-        { "type": "Button", "label": "Stop Continuous Beep", "onClick": "ADRA_StartContinuousBeep($id);" },
+        { "type": "Button", "label": "Stop Continuous Beep", "onClick": "ADRA_StopContinuousBeep($id);" },
         { "type": "Button", "label": "Start Polling", "onClick": "ADRA_StartPolling($id);" },
         { "type": "Button", "label": "Stop Polling", "onClick": "ADRA_StopPolling($id);" },       
         { "type": "Button", "label": "Reset Reader", "onClick": "ADRA_ResetReader($id);" }

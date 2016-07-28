@@ -188,6 +188,8 @@ class ArygonDevice extends IPSModule {
 
         IPS_LogMessage('ArygonDevice', 'Reset reader ...');
 
+        $this->StopContinuousBeep();
+
         // Initiate uC software reset (TAMA is reset as well)
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('au');
