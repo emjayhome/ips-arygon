@@ -161,7 +161,7 @@ class ArygonDevice extends IPSModule {
         if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length);
-            //IPS_LogMessage('ArygonDevice', 'Response is UID with length ' .$length . ' 0x' . $uid);
+            $this->HanldeNewUid($uid);
         }
 
         if (!$this->lock('ResponseData')) {
