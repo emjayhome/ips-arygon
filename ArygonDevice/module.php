@@ -173,6 +173,7 @@ class ArygonDevice extends IPSModule {
     }
 
     private function HandleNewUid($UID) {
+        IPS_Sleep(500);
         $this->CardHold();
         $this->DoubleBeep();
         $PollingID = $this->GetIDForIdent('Polling');
