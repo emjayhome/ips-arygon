@@ -16,6 +16,7 @@ class ArygonDevice extends IPSModule {
 
     public function ApplyChanges() {
         parent::ApplyChanges();
+        $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
         $this->RegisterVariableString("UID", "UID", "", 0);
         $this->RegisterVariableBoolean("Polling", "Polling", "", 1);
         $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 2);
@@ -30,15 +31,12 @@ class ArygonDevice extends IPSModule {
 
     protected function HasActiveParent() {         
         $instance = IPS_GetInstance($this->InstanceID);
-        IPS_LogMessage('ArygonDevice', serialize($instance));
         if ($instance['ConnectionID'] > 0) {
             $parent = IPS_GetInstance($instance['ConnectionID']);
-            IPS_LogMessage('ArygonDevice', serialize($parent));
             if ($parent['InstanceStatus'] == 102) {
                 return true;
             }
         }
-        IPS_LogMessage('ArygonDevice', $parent['InstanceStatus']);
         return false;
     }
 
@@ -324,22 +322,18 @@ class ArygonDevice extends IPSModule {
 
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
-        IPS_LogMessage('ArygonDevice', $Command->ToJSONString('Test'));
         if (!$this->HasActiveParent()) {
-            IPS_LogMessage('ArygonDevice', 'No active parent');
             throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         }
 
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         if (!$this->lock('RequestSendData')) {
-            IPS_LogMessage('ArygonDevice', 'RequestSendData is locked');
             throw new Exception('RequestSendData is locked', E_USER_NOTICE);
         }
 
         if ($needResponse) {
             if (!$this->lock('ResponseData')) {
                 $this->unlock('RequestSendData');
-                IPS_LogMessage('ArygonDevice', 'ResponseData is locked');
                 throw new Exception('ResponseData is locked', E_USER_NOTICE);
             }
             SetValueString($ResponseDataID, '');
@@ -374,16 +368,15 @@ class ArygonDevice extends IPSModule {
 
     protected function SendDataToParent($Data) {
         $JSONString = $Data->ToJSONString('{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}');
-        IPS_LogMessage('ArygonData', $JSONString);
         return @IPS_SendDataToParent($this->InstanceID, $JSONString);
     }
 
     // Command/response protocol - wait for response
     private function WaitForResponse() {
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 200; $i++) {
             if (GetValueString($ResponseDataID) === '') {
-                IPS_Sleep(50);
+                IPS_Sleep(5);
             } else {
                 if ($this->lock('ResponseData')) {
                     $ret = GetValueString($ResponseDataID);
