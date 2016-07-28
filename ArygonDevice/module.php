@@ -24,6 +24,7 @@ class ArygonDevice extends IPSModule {
   
         try {
             $this->ResetReader();
+            $this->StartPolling();
         } catch (Exception $ex) {
             unset($ex);
         }
@@ -265,7 +266,7 @@ class ArygonDevice extends IPSModule {
             $PollingID = $this->GetIDForIdent('Polling');
             SetValueBoolean($PollingID, true);
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'StartPolling exception: ' . $exc->getMessage());
+            IPS_LogMessage('ArygonDevice', 'StartPolling exception: ' . $exc->getMessage());
             unset($exc);
         }
     }
@@ -279,51 +280,45 @@ class ArygonDevice extends IPSModule {
             $PollingID = $this->GetIDForIdent('Polling');
             SetValueBoolean($PollingID, false);
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'StopPolling exception: ' . $exc->getMessage());
+            IPS_LogMessage('ArygonDevice', 'StopPolling exception: ' . $exc->getMessage());
             unset($exc);
         }
+    }
+
+    public function StartContinuousBeep() {
+        $this->RegisterTimer('Beep', 1, 'ADRA_Beep($_IPS[\'TARGET\']);');     
+    }
+
+    public function StopContinuousBeep() {
+        $this->UnregisterTimer('Beep');
     }
 
     public function Beep() {
-
-        // Buzzer: Port 0 -> high
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apw');
-        $Command->SetData('0001');
+        $Command->SetData('0001'); // Buzzer: Port 0 -> high
         try {
-            $result = $this->Send($Command, true); 
+            $this->Send($Command, true); 
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            IPS_LogMessage('ArygonDevice', 'Buzzer on exception: ' . $exc->getMessage());
             unset($exc);
         }
 
-        IPS_Sleep(100);
+        IPS_Sleep(50);
 
-       // Buzzer: Port 0 -> low
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apw');
-        $Command->SetData('0000');
+        $Command->SetData('0000'); // Buzzer: Port 0 -> low
         try {
-            $result = $this->Send($Command, true); 
+            $this->Send($Command, true); 
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            IPS_LogMessage('ArygonDevice', 'Buzzer off exception: ' . $exc->getMessage());
             unset($exc);
         }
 
     }
 
-    public function ContinuousBeep() {
 
-        $this->RegisterTimer('Beep', 1, 'ADRA_Beep($_IPS[\'TARGET\']);');     
-
-        $DeviceState = ArygonDeviceState::Beep;
-
-    }
-
-    public function BeepOff() {
-        $this->UnregisterTimer('Beep');
-        $DeviceState = ArygonDeviceState::Idle;
-    }
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
         IPS_LogMessage('ArygonDevice', $Command->ToJSONString('Test'));
