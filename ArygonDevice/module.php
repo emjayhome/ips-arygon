@@ -16,8 +16,6 @@ class ArygonDevice extends IPSModule {
 
     public function ApplyChanges() {
         parent::ApplyChanges();
-        $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
-        IPS_SetHidden($this->GetIDForIdent('ResponseData'), true);
         $this->RegisterVariableString("UID", "UID", "", 0);
         $this->RegisterVariableBoolean("Polling", "Polling", "", 1);
         $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 2);

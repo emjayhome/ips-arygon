@@ -52,7 +52,6 @@ class ArygonSplitter extends IPSModule {
     public function ForwardData($JSONString) {
         $Data = json_decode($JSONString);
         if ($Data->DataID <> "{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}") {
-            IPS_LogMessage('ArygonSplitter', 'Received unsupported data from child.');
             return false;
         }
         $Command = new ArygonCommandASCII();
@@ -61,7 +60,6 @@ class ArygonSplitter extends IPSModule {
             $this->ForwardCommandFromChild($Command);
         } catch (Exception $ex) {
             trigger_error($ex->getMessage(), $ex->getCode());
-            IPS_LogMessage('ArygonSplitter', 'Exception: ' . $ex->getMessage());
             return false;
         }
         return true;
@@ -76,7 +74,6 @@ class ArygonSplitter extends IPSModule {
         $bufferID = $this->GetIDForIdent("BufferIn");
         SetValueString($bufferID, '');
         $Raw = $Command->GetCommand();
-        IPS_LogMessage('ArygonSplitter', 'Command: ' . $Raw);
 
         if (!$this->lock("ToParent")) {
             throw new Exception("Can not send to parent.", E_USER_NOTICE);
@@ -93,14 +90,10 @@ class ArygonSplitter extends IPSModule {
         return true;
     }
 
-    // IPS raw data iterface for parent (serial interface) to child (device) forwarding
-    public function ReceiveData($JSONString)
-    {
-        IPS_LogMessage('ArygonSplitter', $JSONString);
-        $data = json_decode($JSONString);
-        
-        $this->CheckParents();
+    // IPS raw data iterface for parent (serial interface)
+    public function ReceiveData($JSONString) {
 
+        $data = json_decode($JSONString);
         $bufferID = $this->GetIDForIdent("BufferIn");
         
         if (!$this->lock("ReceiveLock")) {
@@ -108,35 +101,29 @@ class ArygonSplitter extends IPSModule {
             return false;
         }
 
-        IPS_LogMessage('ArygonSplitter', 'New Raw Stream: ' . $data->Buffer);
         $head = GetValueString($bufferID);
         SetValueString($bufferID, '');
         $stream = $head . utf8_decode($data->Buffer);
-        IPS_LogMessage('ArygonSplitter', 'Raw Stream: ' . $stream);
 
         $minLength = 10;
         $dataResponse = true;
         if(strlen($stream) < $minLength) {
             SetValueString($bufferID, $stream);
             $this->unlock("ReceiveLock");
-            return;            
+            return false;            
         }
         $start = strpos($stream, 'FF');
         if ($start === false) {
-            IPS_LogMessage('Arygon Splitter', 'Response packet without FF.');
             $dataResonse = false;
         } elseif ($start > 0) {
-            IPS_LogMessage('Arygon Splitter', 'Response packet did not start with FF.');
             $stream = substr($stream, $start);
         }
         $end = strpos($stream, "\r\n");
-        IPS_LogMessage('ArygonSplitter', 'End: ' . $end);
         if ($end === false) {
             SetValueString($bufferID, $stream);
             $this->unlock("ReceiveLock");
-            return;
+            return false;
         } else {
-            IPS_LogMessage('ArygonSplitter', 'Found end: ' . $stream);
             $stream = substr($stream, 0, $end);
         }
 
@@ -151,10 +138,9 @@ class ArygonSplitter extends IPSModule {
         return true;
     }
 
-    // Forward response from parent (serial interface) to child (device)
+    // Forward response to child (device)
     private function SendResponseToChild(ArygonResponseASCII $Response) {
         $Data = $Response->ToJSONString('{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}');
-        IPS_LogMessage('ArygonSplitter', $Data);
         IPS_SendDataToChildren($this->InstanceID, $Data);
     }
 
