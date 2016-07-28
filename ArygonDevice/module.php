@@ -159,7 +159,7 @@ class ArygonDevice extends IPSModule {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length);
             $UidID = $this->GetIDForIdent('UID');
-            SetValueString($UidID, $UID); 
+            SetValueString($UidID, $uid); 
             return true;
         }
 
