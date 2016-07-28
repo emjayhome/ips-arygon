@@ -158,18 +158,21 @@ class ArygonDevice extends IPSModule {
         if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length);
-            $this->HanldeNewUid($uid);
+            $this->HandleNewUid($uid);
+            return true;
         }
 
         if (!$this->lock('ResponseData')) {
-            throw new Exception('ResponseData is locked', E_USER_NOTICE);
+            return false;
+            //throw new Exception('ResponseData is locked', E_USER_NOTICE);
         }
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         SetValueString($ResponseDataID, $Response->GetRawResponse());
         $this->unlock('ResponseData');
+        return true;
     }
 
-    private function HanldeNewUid($UID) {
+    private function HandleNewUid($UID) {
         $this->DoubleBeep();
         $PollingID = $this->GetIDForIdent('Polling');
         $Polling = GetValueBoolean($PollingID);
@@ -304,6 +307,7 @@ class ArygonDevice extends IPSModule {
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonDevice', 'Buzzer on exception: ' . $exc->getMessage());
             unset($exc);
+            return;
         }
 
         IPS_Sleep(20);
@@ -316,6 +320,7 @@ class ArygonDevice extends IPSModule {
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonDevice', 'Buzzer off exception: ' . $exc->getMessage());
             unset($exc);
+            return;
         }
 
     }
