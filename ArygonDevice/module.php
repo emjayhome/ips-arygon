@@ -19,8 +19,8 @@ class ArygonDevice extends IPSModule {
         $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
         IPS_SetHidden($this->GetIDForIdent('ResponseData'), true);
         $this->RegisterVariableString("UID", "UID", "", 0);
-        $this->RegisterVariableBool("Polling", "Polling", "", 1);
-        $this->RegisterVariableBool("ReaderState", "ReaderState", "", 2);
+        $this->RegisterVariableBoolean("Polling", "Polling", "", 1);
+        $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 2);
   
         try {
             $this->ResetReader();
