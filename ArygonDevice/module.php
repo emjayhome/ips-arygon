@@ -18,8 +18,9 @@ class ArygonDevice extends IPSModule {
         parent::ApplyChanges();
         $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
         IPS_SetHidden($this->GetIDForIdent('ResponseData'), true);
-        $this->RegisterVariableString("CardUID", "CardUID", "", 0);
-        $this->RegisterVariableString("ReaderState", "ReaderState", "", 1);
+        $this->RegisterVariableString("UID", "UID", "", 0);
+        $this->RegisterVariableBool("Polling", "Polling", "", 1);
+        $this->RegisterVariableBool("ReaderState", "ReaderState", "", 2);
   
         try {
             $this->ResetReader();
@@ -148,18 +149,19 @@ class ArygonDevice extends IPSModule {
     // IPS raw data iterface for parent (splitter)
     public function ReceiveData($JSONString) {
         $ResponseData = json_decode($JSONString);
-        IPS_LogMessage('ArygonDevice', 'Response: ' . $JSONString);
+        //IPS_LogMessage('ArygonDevice', 'ReceiveData JSON: ' . $JSONString);
         if ($ResponseData->DataID <> '{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}') {
             return false;
         }
 
         $Response = new ArygonResponseASCII();
         $Response->GetDataFromJSONObject($ResponseData);
-        IPS_LogMessage('ArygonDevice', 'Response Length = ' . $Response->GetUserDataLength() . ' User Data = ' . $Response->GetUserData());
+        
+        // New UID?
         if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length);
-            IPS_LogMessage('ArygonDevice', 'Response is UID with length ' .$length . ' 0x' . $uid);
+            //IPS_LogMessage('ArygonDevice', 'Response is UID with length ' .$length . ' 0x' . $uid);
         }
 
         if (!$this->lock('ResponseData')) {
@@ -168,6 +170,16 @@ class ArygonDevice extends IPSModule {
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         SetValueString($ResponseDataID, $Response->GetRawResponse());
         $this->unlock('ResponseData');
+    }
+
+    private function HanldeNewUid($UID) {
+        $UidID = $this->GetIDForIdent('UID');
+        SetValueString($UidID, $UID);
+        $PollingID = $this->GetIDForIdent('Polling');
+        $Polling = GetValueBoolean($PollingID);
+        if($Polling) {
+            $this->StartPolling();
+        }     
     }
 
     // Reinitialize reader
@@ -245,40 +257,31 @@ class ArygonDevice extends IPSModule {
 
     }
 
-    public function PowerDown() {
-
-        IPS_LogMessage('ArygonDevice', 'Power down ...');
-
-        // Power down mode (sleep)
-        $Command = new ArygonCommandASCII();
-        $Command->SetCommand('asl');
-        try {
-            $this->Send($Command, true);
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        }
-
-        IPS_LogMessage('ArygonDevice', 'Power down OK');
-
-    }
-
-    public function PollCard() {
-
-        IPS_LogMessage('ArygonDevice', 'Polling for card ...');
-
-        // Select a single card/tag
+    public function StartPolling() {
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('s');
         try {
             $this->Send($Command, true);
+            $PollingID = $this->GetIDForIdent('Polling');
+            SetValueBoolean($PollingID, true);
         } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
+            IPS_LogMessage('ArygonData', 'StartPolling exception: ' . $exc->getMessage());
             unset($exc);
         }
+    }
 
-        IPS_LogMessage('ArygonDevice', 'Start polling OK');
-
+    public function StopPolling() {
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('of');
+        $Command->SetData('00');
+        try {
+            $this->Send($Command, true);
+            $PollingID = $this->GetIDForIdent('Polling');
+            SetValueBoolean($PollingID, false);
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonData', 'StopPolling exception: ' . $exc->getMessage());
+            unset($exc);
+        }
     }
 
     public function Beep() {
@@ -360,6 +363,11 @@ class ArygonDevice extends IPSModule {
         if ($Response === false) {
             $this->unlock('RequestSendData');
             throw new Exception('Send Data Timeout', E_USER_NOTICE);
+        }
+
+        if(!$Response->IsOK()) {
+            $this->unlock('RequestSendData');
+            throw new Exception('Response error = ' . $Response->GetErrorCode() . ' Suberror = ' . $Response->GetSubErrorCode(), E_USER_NOTICE);            
         }
 
         $this->unlock('RequestSendData');
