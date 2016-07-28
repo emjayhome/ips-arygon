@@ -5,11 +5,11 @@
     "actions":
     [
         { "type": "Button", "label": "Single Beep", "onClick": "ADRA_Beep($id);" },
-        { "type": "Button", "label": "Continuous Beep", "onClick": "ADRA_ContinuousBeep($id);" },
-        { "type": "Button", "label": "Stop Beep", "onClick": "ADRA_BeepOff($id);" },
-        { "type": "Button", "label": "Reset Reader", "onClick": "ADRA_ResetReader($id);" },
-        { "type": "Button", "label": "Power Down", "onClick": "ADRA_PowerDown($id);" },
-        { "type": "Button", "label": "Poll", "onClick": "ADRA_PollCard($id);" }
+        { "type": "Button", "label": "Start Continuous Beep", "onClick": "ADRA_StartContinuousBeep($id);" },
+        { "type": "Button", "label": "Stop Continuous Beep", "onClick": "ADRA_StartContinuousBeep($id);" },
+        { "type": "Button", "label": "Start Polling", "onClick": "ADRA_StartPolling($id);" },
+        { "type": "Button", "label": "Stop Polling", "onClick": "ADRA_StopPolling($id);" },       
+        { "type": "Button", "label": "Reset Reader", "onClick": "ADRA_ResetReader($id);" }
     ],
     "status":
     [
