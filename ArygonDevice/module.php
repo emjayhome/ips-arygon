@@ -170,13 +170,14 @@ class ArygonDevice extends IPSModule {
     }
 
     private function HanldeNewUid($UID) {
-        $UidID = $this->GetIDForIdent('UID');
-        SetValueString($UidID, $UID);
+        $this->DoubleBeep();
         $PollingID = $this->GetIDForIdent('Polling');
         $Polling = GetValueBoolean($PollingID);
         if($Polling) {
             $this->StartPolling();
-        }     
+        } 
+        $UidID = $this->GetIDForIdent('UID');
+        SetValueString($UidID, $UID);   
     }
 
     // Reinitialize reader
@@ -305,7 +306,7 @@ class ArygonDevice extends IPSModule {
             unset($exc);
         }
 
-        IPS_Sleep(50);
+        IPS_Sleep(20);
 
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apw');
