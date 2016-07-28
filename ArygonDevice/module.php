@@ -158,7 +158,8 @@ class ArygonDevice extends IPSModule {
         if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length);
-            $this->HandleNewUid($uid);
+            $UidID = $this->GetIDForIdent('UID');
+            SetValueString($UidID, $UID); 
             return true;
         }
 
@@ -172,8 +173,7 @@ class ArygonDevice extends IPSModule {
         return true;
     }
 
-    private function HandleNewUid($UID) {
-        IPS_Sleep(500);
+    public function HandleNewUid($UID) {
         $this->CardHold();
         $this->DoubleBeep();
         $PollingID = $this->GetIDForIdent('Polling');
@@ -181,8 +181,6 @@ class ArygonDevice extends IPSModule {
         if($Polling) {
             $this->StartPolling();
         } 
-        $UidID = $this->GetIDForIdent('UID');
-        SetValueString($UidID, $UID);   
     }
 
     // Reinitialize reader
