@@ -365,11 +365,6 @@ class ArygonDevice extends IPSModule {
             throw new Exception('Send Data Timeout', E_USER_NOTICE);
         }
 
-        if(!$Response->IsOK()) {
-            $this->unlock('RequestSendData');
-            throw new Exception('Response error = ' . $Response->GetErrorCode() . ' Suberror = ' . $Response->GetSubErrorCode(), E_USER_NOTICE);            
-        }
-
         $this->unlock('RequestSendData');
         return $Response;
     }
