@@ -173,6 +173,7 @@ class ArygonDevice extends IPSModule {
     }
 
     private function HandleNewUid($UID) {
+        $this->CardHold();
         $this->DoubleBeep();
         $PollingID = $this->GetIDForIdent('Polling');
         $Polling = GetValueBoolean($PollingID);
@@ -285,6 +286,18 @@ class ArygonDevice extends IPSModule {
             IPS_LogMessage('ArygonDevice', 'StopPolling exception: ' . $exc->getMessage());
             unset($exc);
         }
+    }
+
+    private function CardHold() {
+        $Command = new ArygonCommandASCII();
+        $Command->SetCommand('h');
+        $Command->SetData('00');
+        try {
+            $this->Send($Command, true);
+        } catch (Exception $exc) {
+            IPS_LogMessage('ArygonDevice', 'CardHold exception: ' . $exc->getMessage());
+            unset($exc);
+        }       
     }
 
     public function StartContinuousBeep() {
