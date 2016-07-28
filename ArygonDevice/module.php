@@ -293,6 +293,11 @@ class ArygonDevice extends IPSModule {
         $this->UnregisterTimer('Beep');
     }
 
+    public function DoubleBeep() {
+        $this->Beep();
+        $this->Beep();
+    }
+
     public function Beep() {
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apw');
