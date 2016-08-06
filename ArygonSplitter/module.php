@@ -79,6 +79,7 @@ class ArygonSplitter extends IPSModule {
         //    throw new Exception("Instance has no active parent.", E_USER_NOTICE);
         //}
 
+        /*
         $bufferID = $this->GetIDForIdent("BufferIn");
 
         if (!$this->lock("ReceiveLock")) {
@@ -86,6 +87,7 @@ class ArygonSplitter extends IPSModule {
         }
         SetValueString($bufferID, '');
         $this->unlock("ReceiveLock");
+        */
 
         $Raw = $Command->GetCommand();
 
@@ -138,15 +140,20 @@ class ArygonSplitter extends IPSModule {
             $this->unlock("ReceiveLock");
             return false;
         } else {
-            $stream = substr($stream, 0, $end);
+            $head = substr($stream, 0, $end);
+            $tail = substr($stream, $end);
         }
 
         $this->unlock("ReceiveLock");
 
         if ($dataResponse) {   
             $Response = new ArygonResponseASCII();
-            $Response->SetResponse($stream);
+            $Response->SetResponse($head);
             $this->SendResponseToChild($Response);
+        }
+
+        if (strlen($tail) >= $minLength) {
+            $this->ReceiveData(json_encode(array('Buffer' => '')));
         }
 
         return true;
