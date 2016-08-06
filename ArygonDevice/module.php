@@ -69,7 +69,7 @@ class ArygonDevice extends IPSModule {
         SetValueInteger($ReaderStateID, $state);  
     }
 
-    private function GetReaderState($state) {
+    private function GetReaderState() {
         $ReaderStateID = $this->GetIDForIdent('ReaderState');
         return GetValueInteger($ReaderStateID);  
     }
