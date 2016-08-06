@@ -181,7 +181,7 @@ class ArygonDevice extends IPSModule {
         $Response = new ArygonResponseASCII();
         $Response->GetDataFromJSONObject($ResponseData);
         
-        // New UID?
+       // New UID?
         if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length*2);
@@ -189,7 +189,7 @@ class ArygonDevice extends IPSModule {
             SetValueString($UidID, $uid); 
             return true;
         }
-
+        
         if (!$this->lock('ResponseData')) {
             return false;
             //throw new Exception('ResponseData is locked', E_USER_NOTICE);
@@ -201,11 +201,9 @@ class ArygonDevice extends IPSModule {
     }
 
     public function HandleNewUid($UID) {
-        $this->CardHold();
+        //$this->CardHold();
         $this->DoubleBeep();
-        if($Polling) {
-            $this->StartPolling();
-        } 
+        $this->StartPolling();
     }
 
     // Reinitialize reader
