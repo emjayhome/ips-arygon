@@ -245,33 +245,48 @@ class ArygonDevice extends IPSModule {
         // Get uC firmware version
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('av');
-        $result = $this->Send($Command, true);
-        IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
+        $try {
+            $result = $this->Send($Command, true);
+            IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
+        } catch(Exception $exc) {
+            IPS_LogMessage('ArygonDevice', 'Read firmware version failed');
+            return false;
+        }
 
         // Get the unique serial number of the reader
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('asn');
-        $result = $this->Send($Command, true);
-        IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
+        try {
+            $result = $this->Send($Command, true);
+            IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
+        } catch(Exception $exc) {
+            IPS_LogMessage('ArygonDevice', 'Read serial number failed');
+            return false;
+        }
 
         // Configuration of the GPIO pins
-        // Buzzer: Port 0 -> output
-        $Command = new ArygonCommandASCII();
-        $Command->SetCommand('apc');
-        $Command->SetData('0000');
-        $this->Send($Command, true); 
+        try {
+            // Buzzer: Port 0 -> output
+            $Command = new ArygonCommandASCII();
+            $Command->SetCommand('apc');
+            $Command->SetData('0000');
+            $this->Send($Command, true); 
 
-        // Red LED: Port 2 -> output
-        $Command = new ArygonCommandASCII();
-        $Command->SetCommand('apc');
-        $Command->SetData('0200');
-        $this->Send($Command, true); 
+            // Red LED: Port 2 -> output
+            $Command = new ArygonCommandASCII();
+            $Command->SetCommand('apc');
+            $Command->SetData('0200');
+            $this->Send($Command, true); 
 
-        // Green LED: Port 6 -> output
-        $Command = new ArygonCommandASCII();
-        $Command->SetCommand('apc');
-        $Command->SetData('0600');
-        $this->Send($Command, true); 
+            // Green LED: Port 6 -> output
+            $Command = new ArygonCommandASCII();
+            $Command->SetCommand('apc');
+            $Command->SetData('0600');
+            $this->Send($Command, true); 
+        } catch(Exception $exc) {
+            IPS_LogMessage('ArygonDevice', 'Configure GPIO pins failed');
+            return false;
+        }
 
     }
 
