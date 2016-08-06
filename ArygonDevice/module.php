@@ -183,13 +183,14 @@ class ArygonDevice extends IPSModule {
         
        // New UID?
         if(($Response->GetUserDataLength()) > 16 && ($Response->GetUserData()[0] == '4') && ($Response->GetUserData()[1] == 'B')) {
+            $this->StopContinuousBeep();
             $length = hexdec(substr($Response->GetUserData(), 12, 2));
             $uid = substr($Response->GetUserData(), 14, $length*2);
             $UidID = $this->GetIDForIdent('UID');
             SetValueString($UidID, $uid); 
             return true;
         }
-        
+
         if (!$this->lock('ResponseData')) {
             return false;
             //throw new Exception('ResponseData is locked', E_USER_NOTICE);
