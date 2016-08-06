@@ -18,13 +18,6 @@ class ArygonDevice extends IPSModule {
         $this->RegisterVariableString("UID", "UID", "", 0);
         $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 1);
         //$this->CheckParent();
-
-        try {
-            $this->ResetReader();
-            $this->StartPolling();
-        } catch (Exception $ex) {
-            unset($ex);
-        }
     }
 
     private function CheckParent() {
@@ -210,8 +203,6 @@ class ArygonDevice extends IPSModule {
     public function HandleNewUid($UID) {
         $this->CardHold();
         $this->DoubleBeep();
-        $PollingID = $this->GetIDForIdent('Polling');
-        $Polling = GetValueBoolean($PollingID);
         if($Polling) {
             $this->StartPolling();
         } 
@@ -288,6 +279,9 @@ class ArygonDevice extends IPSModule {
             return false;
         }
 
+        // Start polling
+        return $this->StartPolling();
+
     }
 
     public function StartPolling() {
@@ -295,11 +289,8 @@ class ArygonDevice extends IPSModule {
         $Command->SetCommand('s');
         try {
             $this->Send($Command, true);
-            $PollingID = $this->GetIDForIdent('Polling');
-            SetValueBoolean($PollingID, true);
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonDevice', 'StartPolling exception: ' . $exc->getMessage());
-            unset($exc);
         }
     }
 
@@ -309,11 +300,8 @@ class ArygonDevice extends IPSModule {
         $Command->SetData('00');
         try {
             $this->Send($Command, true);
-            $PollingID = $this->GetIDForIdent('Polling');
-            SetValueBoolean($PollingID, false);
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonDevice', 'StopPolling exception: ' . $exc->getMessage());
-            unset($exc);
         }
     }
 
