@@ -15,7 +15,7 @@ class ArygonSplitter extends IPSModule {
         parent::ApplyChanges();
         $this->RegisterVariableString("BufferIn", "BufferIn", "", -1);
         IPS_SetHidden($this->GetIDForIdent('BufferIn'), true);
-        $this->CheckParents();
+        //$this->CheckParents();
     }
 
     private function CheckParents() {
@@ -75,9 +75,9 @@ class ArygonSplitter extends IPSModule {
 
     // Forward command from child (device) to parent (serial interface)
     private function ForwardCommandFromChild(ArygonCommandASCII $Command) {
-        if (!$this->CheckParents()) {
-            throw new Exception("Instance has no active parent.", E_USER_NOTICE);
-        }
+        //if (!$this->CheckParents()) {
+        //    throw new Exception("Instance has no active parent.", E_USER_NOTICE);
+        //}
 
         $bufferID = $this->GetIDForIdent("BufferIn");
 

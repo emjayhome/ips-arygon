@@ -17,7 +17,7 @@ class ArygonDevice extends IPSModule {
         $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
         $this->RegisterVariableString("UID", "UID", "", 0);
         $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 1);
-        $this->CheckParent();
+        //$this->CheckParent();
 
         try {
             $this->ResetReader();
@@ -49,7 +49,6 @@ class ArygonDevice extends IPSModule {
         $instance = IPS_GetInstance($this->InstanceID);
         if ($instance['ConnectionID'] > 0) {
             $parent = IPS_GetInstance($instance['ConnectionID']);
-            $parent->ApplyChanges();
             if ($parent['InstanceStatus'] == 102) {
                 $this->UpdateReaderState(ArygonDeviceState::Idle);
                 return true;
@@ -221,7 +220,7 @@ class ArygonDevice extends IPSModule {
     // Reinitialize reader
     public function ResetReader() {
 
-        $this->CheckParent();
+        //$this->CheckParent();
 
         if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
             IPS_LogMessage('ArygonDevice', 'Module is inactive');
@@ -383,9 +382,9 @@ class ArygonDevice extends IPSModule {
 
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
-        if (!$this->HasActiveParent()) {
-            throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
-        }
+        //if (!$this->HasActiveParent()) {
+        //    throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
+        //}
 
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         if (!$this->lock('RequestSendData')) {
