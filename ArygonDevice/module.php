@@ -222,10 +222,10 @@ class ArygonDevice extends IPSModule {
 
         //$this->CheckParent();
 
-        if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
-            IPS_LogMessage('ArygonDevice', 'Module is inactive');
-            return false;
-        }
+        //if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
+        //    IPS_LogMessage('ArygonDevice', 'Module is inactive');
+        //    return false;
+        //}
 
         if(!$this->StopContinuousBeep()) {
             return false;
