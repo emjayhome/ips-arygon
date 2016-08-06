@@ -327,7 +327,7 @@ class ArygonDevice extends IPSModule {
         try {
             $this->UnregisterTimer('Beep');
             return true;
-        } carch (Exception $exc) {
+        } catch (Exception $exc) {
             return false;
         }
     }
