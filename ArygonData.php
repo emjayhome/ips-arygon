@@ -3,9 +3,8 @@
 class ArygonDeviceState {
     const Inactive = 0;
     const Idle = 1;
-    const Error = 2;
-    const Beep = 3;
-
+    const Polling = 2;
+    const Error = -1;
 }
 
 class ArygonCommandASCII {

@@ -14,7 +14,9 @@
     ],
     "status":
     [
-        { "code": 102, "icon": "active", "caption": "Module OK" },
-        { "code": 201, "icon": "error", "caption": "Module error" },
+        { "code": 102, "icon": "active", "caption": "Module is OK" },
+        { "code": 104, "icon": "inactive", "caption": "Module is inactive" },
+        { "code": 201, "icon": "error", "caption": "Module has no parent" },
+        { "code": 202, "icon": "error", "caption": "Module has incompatible parent" }
     ]
 }

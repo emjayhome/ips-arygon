@@ -5,8 +5,6 @@ require_once(__DIR__ . "/../IpsIncludes.php");
 
 class ArygonDevice extends IPSModule {
 
-    private $DeviceState = ArygonDeviceState::Inactive;
-
     // IPS module functions
 
     public function Create() {
@@ -18,9 +16,9 @@ class ArygonDevice extends IPSModule {
         parent::ApplyChanges();
         $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
         $this->RegisterVariableString("UID", "UID", "", 0);
-        $this->RegisterVariableBoolean("Polling", "Polling", "", 1);
-        $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 2);
-  
+        $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 1);
+        $this->CheckParent();
+
         try {
             $this->ResetReader();
             $this->StartPolling();
@@ -29,15 +27,51 @@ class ArygonDevice extends IPSModule {
         }
     }
 
+    private function CheckParent() {
+        $result = $this->HasActiveParent();
+        if ($result) {
+            $instance = IPS_GetInstance($this->InstanceID);
+            $parentGUID = IPS_GetInstance($instance['ConnectionID'])['ModuleInfo']['ModuleID'];
+            if ($parentGUID != '{2F75DC6B-F9AA-4A2E-B121-F76FBC365566}') {
+                IPS_LogMessage('ArygonDevice', 'Parent not supported.');
+                $this->SetStatus(202);
+                $this->UpdateReaderState(ArygonDeviceState::Inactive);
+                $result = false;
+            } else {
+               $this->SetStatus(102); 
+               $this->UpdateReaderState(ArygonDeviceState::Idle);
+            }
+        }
+        return $result;
+    }
+
     protected function HasActiveParent() {         
         $instance = IPS_GetInstance($this->InstanceID);
         if ($instance['ConnectionID'] > 0) {
             $parent = IPS_GetInstance($instance['ConnectionID']);
             if ($parent['InstanceStatus'] == 102) {
+                $this->UpdateReaderState(ArygonDeviceState::Idle);
                 return true;
+            } else {
+                $this->SetStatus(104);
+                $this->UpdateReaderState(ArygonDeviceState::Inactive);
             }
+        } else { // No parent
+            $this->SetStatus(201);
+            $this->UpdateReaderState(ArygonDeviceState::Inactive);
         }
+        IPS_LogMessage('ArygonDevice', 'No active parent.');
         return false;
+    }
+
+    private function UpdateReaderState($state) {
+        $ReaderStateID = $this->GetIDForIdent('ReaderState');
+        SetValueInteger($ReaderStateID, $state);  
+    }
+
+    private function GetReaderState($state) {
+        $ReaderStateID = $this->GetIDForIdent('ReaderState');
+        return GetValueInteger($ReaderStateID);  
     }
 
     protected function GetVariable($Ident, $VarType, $VarName, $Profile, $EnableAction)
@@ -186,77 +220,48 @@ class ArygonDevice extends IPSModule {
     // Reinitialize reader
     public function ResetReader() {
 
-        IPS_LogMessage('ArygonDevice', 'Reset reader ...');
+        if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
+            throw new Exception("Module is inactive.", E_USER_NOTICE); 
+        }
 
         $this->StopContinuousBeep();
 
         // Initiate uC software reset (TAMA is reset as well)
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('au');
-        try {
-            $this->Send($Command, true);
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        }
-
+        $this->Send($Command, true);
         IPS_LogMessage('ArygonDevice', 'Reset OK');
 
         // Get uC firmware version
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('av');
-        try {
-            $result = $this->Send($Command, true);
-            IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        }
+        $result = $this->Send($Command, true);
+        IPS_LogMessage('ArygonDevice', 'Firmware version: ' . $result->GetUserData());
 
         // Get the unique serial number of the reader
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('asn');
-        try {
-            $result = $this->Send($Command, true);
-            IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        } 
+        $result = $this->Send($Command, true);
+        IPS_LogMessage('ArygonDevice', 'Serial number: ' . $result->GetUserData());  
 
         // Configuration of the GPIO pins
         // Buzzer: Port 0 -> output
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apc');
         $Command->SetData('0000');
-        try {
-            $result = $this->Send($Command, true); 
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        }           
+        $this->Send($Command, true); 
 
         // Red LED: Port 2 -> output
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apc');
         $Command->SetData('0200');
-        try {
-            $result = $this->Send($Command, true); 
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        }  
+        $this->Send($Command, true); 
 
         // Green LED: Port 6 -> output
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('apc');
         $Command->SetData('0600');
-        try {
-            $result = $this->Send($Command, true); 
-        } catch (Exception $exc) {
-            IPS_LogMessage('ArygonData', 'Exception: ' . $exc->getMessage());
-            unset($exc);
-        }
+        $this->Send($Command, true); 
 
     }
 
