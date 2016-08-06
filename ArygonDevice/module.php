@@ -49,6 +49,7 @@ class ArygonDevice extends IPSModule {
         $instance = IPS_GetInstance($this->InstanceID);
         if ($instance['ConnectionID'] > 0) {
             $parent = IPS_GetInstance($instance['ConnectionID']);
+            $parent->ApplyChanges();
             if ($parent['InstanceStatus'] == 102) {
                 $this->UpdateReaderState(ArygonDeviceState::Idle);
                 return true;
