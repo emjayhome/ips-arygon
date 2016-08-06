@@ -220,6 +220,8 @@ class ArygonDevice extends IPSModule {
     // Reinitialize reader
     public function ResetReader() {
 
+        $this->CheckParent();
+
         if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
             throw new Exception("Module is inactive.", E_USER_NOTICE); 
         }
