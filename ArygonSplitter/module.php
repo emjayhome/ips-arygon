@@ -15,6 +15,7 @@ class ArygonSplitter extends IPSModule {
         parent::ApplyChanges();
         $this->RegisterVariableString("BufferIn", "BufferIn", "", -1);
         IPS_SetHidden($this->GetIDForIdent('BufferIn'), true);
+        $this->CheckParents();
     }
 
     private function CheckParents() {
@@ -24,7 +25,10 @@ class ArygonSplitter extends IPSModule {
             $parentGUID = IPS_GetInstance($instance['ConnectionID'])['ModuleInfo']['ModuleID'];
             if ($parentGUID != '{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}') {
                 IPS_LogMessage('Arygon Splitter', 'Parent not supported.');
+                $this->SetStatus(202);
                 $result = false;
+            } else {
+               $this->SetStatus(102); 
             }
         }
         return $result;
@@ -36,7 +40,11 @@ class ArygonSplitter extends IPSModule {
             $parent = IPS_GetInstance($instance['ConnectionID']);
             if ($parent['InstanceStatus'] == 102) {
                 return true;
+            } else {
+                $this->SetStatus(104);
             }
+        } else { // No parent
+            $this->SetStatus(201);
         }
         IPS_LogMessage('ArygonSplitter', 'No active parent.');
         return false;
