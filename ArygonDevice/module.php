@@ -223,16 +223,24 @@ class ArygonDevice extends IPSModule {
         $this->CheckParent();
 
         if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
-            throw new Exception("Module is inactive.", E_USER_NOTICE); 
+            IPS_LogMessage('ArygonDevice', 'Module is inactive');
+            return false;
         }
 
-        $this->StopContinuousBeep();
+        if(!$this->StopContinuousBeep()) {
+            return false;
+        }
 
         // Initiate uC software reset (TAMA is reset as well)
         $Command = new ArygonCommandASCII();
         $Command->SetCommand('au');
-        $this->Send($Command, true);
-        IPS_LogMessage('ArygonDevice', 'Reset OK');
+        try {
+            $this->Send($Command, true);
+            IPS_LogMessage('ArygonDevice', 'Reset OK');
+        } catch(Exception $exc) {
+            IPS_LogMessage('ArygonDevice', 'Reset failed');
+            return false;
+        }
 
         // Get uC firmware version
         $Command = new ArygonCommandASCII();
