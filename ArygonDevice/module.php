@@ -202,7 +202,7 @@ class ArygonDevice extends IPSModule {
     }
 
     public function HandleNewUid($UID) {
-        //$this->CardHold();
+        $this->CardHold();
         $this->DoubleBeep();
         $this->StartPolling();
     }
@@ -218,7 +218,7 @@ class ArygonDevice extends IPSModule {
         //}
 
         if(!$this->StopContinuousBeep()) {
-            return false;
+            //return false;
         }
 
         // Initiate uC software reset (TAMA is reset as well)
