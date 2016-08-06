@@ -80,7 +80,13 @@ class ArygonSplitter extends IPSModule {
         }
 
         $bufferID = $this->GetIDForIdent("BufferIn");
+
+        if (!$this->lock("ReceiveLock")) {
+            throw new Exception("ReceiveBuffer is locked.", E_USER_NOTICE);
+        }
         SetValueString($bufferID, '');
+        $this->unlock("ReceiveLock");
+
         $Raw = $Command->GetCommand();
 
         if (!$this->lock("ToParent")) {
