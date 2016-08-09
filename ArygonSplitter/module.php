@@ -67,6 +67,7 @@ class ArygonSplitter extends IPSModule {
         try {
             $this->ForwardCommandFromChild($Command);
         } catch (Exception $ex) {
+            IPS_LogMessage('ArygonSplitter', 'Forward Data Exception: ' . $ex->getMessage());
             trigger_error($ex->getMessage(), $ex->getCode());
             return false;
         }
@@ -99,6 +100,7 @@ class ArygonSplitter extends IPSModule {
             IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Raw))));
         } catch (Exception $exc) {
             $this->unlock("ToParent");
+            IPS_LogMessage('ArygonSplitter', 'Forward Command Exception: ' . $ex->getMessage());
             throw new Exception($exc);
         }
 
@@ -175,6 +177,7 @@ class ArygonSplitter extends IPSModule {
                 IPS_Sleep(mt_rand(1, 5));
             }
         }
+        IPS_LogMessage('ArygonSplitter', 'Failed to lock ' . $ident);
         return false;
     }
 
