@@ -97,6 +97,7 @@ class ArygonSplitter extends IPSModule {
         }
 
         try {
+            IPS_LogMessage('ArygonSplitter', 'Sending raw: ' . utf8_encode($Raw));
             IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Raw))));
         } catch (Exception $exc) {
             $this->unlock("ToParent");
@@ -121,6 +122,7 @@ class ArygonSplitter extends IPSModule {
 
         $head = GetValueString($bufferID);
         SetValueString($bufferID, '');
+        IPS_LogMessage('ArygonSplitter', 'Receiving raw: ' . utf8_decode($data->Buffer));
         $stream = $head . utf8_decode($data->Buffer);
 
         $minLength = 10;
