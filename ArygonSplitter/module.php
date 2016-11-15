@@ -130,6 +130,7 @@ class ArygonSplitter extends IPSModule {
         if(strlen($stream) < $minLength) {
             SetValueString($bufferID, $stream);
             $this->unlock("ReceiveLock");
+            IPS_LogMessage('ArygonSplitter', 'Too short');
             return false;            
         }
         $start = strpos($stream, 'FF');
@@ -142,6 +143,7 @@ class ArygonSplitter extends IPSModule {
         if ($end === false) {
             SetValueString($bufferID, $stream);
             $this->unlock("ReceiveLock");
+            IPS_LogMessage('ArygonSplitter', 'Missing end');
             return false;
         } else {
             $head = substr($stream, 0, $end);
@@ -160,6 +162,7 @@ class ArygonSplitter extends IPSModule {
             $this->ReceiveData(json_encode(array('Buffer' => '')));
         }
 
+        IPS_LogMessage('ArygonSplitter', 'Success');
         return true;
     }
 
