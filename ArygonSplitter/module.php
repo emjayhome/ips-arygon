@@ -147,7 +147,7 @@ class ArygonSplitter extends IPSModule {
             return false;
         } else {
             $head = substr($stream, 0, $end);
-            $tail = substr($stream, $end);
+            $tail = substr($stream, $end+2);
         }
 
         $this->unlock("ReceiveLock");
