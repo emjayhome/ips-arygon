@@ -156,15 +156,15 @@ class ArygonSplitter extends IPSModule {
             $Response = new ArygonResponseASCII();
             $Response->SetResponse($head);
             $this->SendResponseToChild($Response);
-        }
-
-        if (strlen($tail) >= $minLength) {
-            $this->ReceiveData(json_encode(array('Buffer' => utf8_encode($tail))));
-        } else {
-        	if($tail !== false) {
-        		SetValueString($bufferID, $tail);
-        	}
-        }
+        
+	        if (strlen($tail) >= $minLength) {
+	            $this->ReceiveData(json_encode(array('Buffer' => utf8_encode($tail))));
+	        } else {
+	        	if($tail !== false) {
+	        		SetValueString($bufferID, $tail);
+	        	}
+	        }
+	    }
 
         IPS_LogMessage('ArygonSplitter', 'Success');
         return true;
