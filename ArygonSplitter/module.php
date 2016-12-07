@@ -161,7 +161,9 @@ class ArygonSplitter extends IPSModule {
         if (strlen($tail) >= $minLength) {
             $this->ReceiveData(json_encode(array('Buffer' => utf8_encode($tail))));
         } else {
-        	SetValueString($bufferID, $tail);
+        	if($tail !== false) {
+        		SetValueString($bufferID, $tail);
+        	}
         }
 
         IPS_LogMessage('ArygonSplitter', 'Success');
