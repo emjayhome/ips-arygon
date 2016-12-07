@@ -152,6 +152,14 @@ class ArygonSplitter extends IPSModule {
 
         $this->unlock("ReceiveLock");
 
+        if((!$dataResponse) && ($end!==false)) { // Reset response?
+        	if(strpos($stream, "Bootloader") !== false) { // Yes
+	            $Response = new ArygonResponseASCII();
+	            $Response->SetResponse('OK');
+	            $this->SendResponseToChild($Response);   
+	       	}     	
+        } 
+
         if ($dataResponse) {   
             $Response = new ArygonResponseASCII();
             $Response->SetResponse($head);
