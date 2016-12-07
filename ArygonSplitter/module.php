@@ -135,7 +135,7 @@ class ArygonSplitter extends IPSModule {
         }
         $start = strpos($stream, 'FF');
         if ($start === false) {
-            $dataResonse = false;
+            $dataResponse = false;
         } elseif ($start > 0) {
             $stream = substr($stream, $start);
         }
@@ -147,7 +147,7 @@ class ArygonSplitter extends IPSModule {
             return false;
         } else {
             $head = substr($stream, 0, $end);
-            $tail = substr($stream, $end);
+            $tail = substr($stream, $end+2);
         }
 
         $this->unlock("ReceiveLock");
@@ -159,7 +159,9 @@ class ArygonSplitter extends IPSModule {
         }
 
         if (strlen($tail) >= $minLength) {
-            $this->ReceiveData(json_encode(array('Buffer' => '')));
+            $this->ReceiveData(json_encode(array('Buffer' => utf8_encode($tail))));
+        } else {
+        	SetValueString($bufferID, $tail);
         }
 
         IPS_LogMessage('ArygonSplitter', 'Success');
