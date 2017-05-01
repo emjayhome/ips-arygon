@@ -366,15 +366,13 @@ class ArygonDevice extends IPSModule {
 
     }
 
-
-
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
         //if (!$this->HasActiveParent()) {
         //    throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
         //}
 
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
-        if (!$this->lock('RequestSendData')) {
+        if (!$this->lock('RequestSendData')) {  
             throw new Exception('RequestSendData is locked', E_USER_NOTICE);
         }
 
@@ -387,7 +385,7 @@ class ArygonDevice extends IPSModule {
             $this->unlock('ResponseData');
         }
 
-        $ret = $this->SendDataToParent($Command);
+        $ret = $this->SendDataToParent($Command->ToJSONString('{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}'));
         if ($ret === false) {
             $this->unlock('RequestSendData');
             throw new Exception('Instance has no active Parent Instance!', E_USER_NOTICE);
@@ -403,14 +401,9 @@ class ArygonDevice extends IPSModule {
             $this->unlock('RequestSendData');
             throw new Exception('Send Data Timeout', E_USER_NOTICE);
         }
-
+        
         $this->unlock('RequestSendData');
         return $Response;
-    }
-
-    protected function SendDataToParent($Data) {
-        $JSONString = $Data->ToJSONString('{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}');
-        return @IPS_SendDataToParent($this->InstanceID, $JSONString);
     }
 
     // Command/response protocol - wait for response
@@ -442,7 +435,7 @@ class ArygonDevice extends IPSModule {
 
     private function lock($ident) {
         for ($i = 0; $i < 100; $i++) {
-            if (IPS_SemaphoreEnter("ADRA_" . (string) $this->InstanceID . (string) $ident, 1)) {
+            if (IPS_SemaphoreEnter("ADRA1_" . (string) $this->InstanceID . (string) $ident, 1)) {
                 return true;
             } else {
                 IPS_Sleep(mt_rand(1, 5));
@@ -452,7 +445,7 @@ class ArygonDevice extends IPSModule {
     }
 
     private function unlock($ident) {
-        IPS_SemaphoreLeave("ADRA_" . (string) $this->InstanceID . (string) $ident);
+        IPS_SemaphoreLeave("ADRA1_" . (string) $this->InstanceID . (string) $ident);
     }
 
 }

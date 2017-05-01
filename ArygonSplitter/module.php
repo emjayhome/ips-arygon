@@ -98,8 +98,9 @@ class ArygonSplitter extends IPSModule {
 
         try {
             IPS_LogMessage('ArygonSplitter', 'Sending raw: ' . utf8_encode($Raw));
-            IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Raw))));
-        } catch (Exception $exc) {
+            //IPS_SendDataToParent($this->InstanceID, json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Raw))));
+            $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => utf8_encode($Raw))));
+            } catch (Exception $exc) {
             $this->unlock("ToParent");
             IPS_LogMessage('ArygonSplitter', 'Forward Command Exception: ' . $ex->getMessage());
             throw new Exception($exc);
@@ -153,35 +154,29 @@ class ArygonSplitter extends IPSModule {
         $this->unlock("ReceiveLock");
 
         if((!$dataResponse) && ($end!==false)) { // Reset response?
-        	if(strpos($stream, "Bootloader") !== false) { // Yes
-	            $Response = new ArygonResponseASCII();
-	            $Response->SetResponse('OK');
-	            $this->SendResponseToChild($Response);   
-	       	}     	
+            if(strpos($stream, "Bootloader") !== false) { // Yes
+                $Response = new ArygonResponseASCII();
+                $Response->SetResponse('OK');
+                $this->SendDataToChildren($Response->ToJSONString('{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}'));   
+            }       
         } 
 
         if ($dataResponse) {   
             $Response = new ArygonResponseASCII();
             $Response->SetResponse($head);
-            $this->SendResponseToChild($Response);
+            $this->SendDataToChildren($Response->ToJSONString('{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}'));
         
-	        if (strlen($tail) >= $minLength) {
-	            $this->ReceiveData(json_encode(array('Buffer' => utf8_encode($tail))));
-	        } else {
-	        	if($tail !== false) {
-	        		SetValueString($bufferID, $tail);
-	        	}
-	        }
-	    }
+            if (strlen($tail) >= $minLength) {
+                $this->ReceiveData(json_encode(array('Buffer' => utf8_encode($tail))));
+            } else {
+                if($tail !== false) {
+                    SetValueString($bufferID, $tail);
+                }
+            }
+        }
 
         IPS_LogMessage('ArygonSplitter', 'Success');
         return true;
-    }
-
-    // Forward response to child (device)
-    private function SendResponseToChild(ArygonResponseASCII $Response) {
-        $Data = $Response->ToJSONString('{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}');
-        IPS_SendDataToChildren($this->InstanceID, $Data);
     }
 
     // Semaphore helpers
