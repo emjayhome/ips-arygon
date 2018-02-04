@@ -290,7 +290,9 @@ class ArygonDevice extends IPSModule {
             $this->Send($Command, true);
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonDevice', 'StartPolling exception: ' . $exc->getMessage());
+            return false;
         }
+        return true;
     }
 
     public function StopPolling() {
@@ -301,7 +303,9 @@ class ArygonDevice extends IPSModule {
             $this->Send($Command, true);
         } catch (Exception $exc) {
             IPS_LogMessage('ArygonDevice', 'StopPolling exception: ' . $exc->getMessage());
+            return false;
         }
+        return true;
     }
 
     private function CardHold() {
