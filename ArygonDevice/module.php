@@ -9,174 +9,28 @@ class ArygonDevice extends IPSModule {
 
     public function Create() {
         parent::Create();
-        $this->ConnectParent("{2F75DC6B-F9AA-4A2E-B121-F76FBC365566}");
-    }
-
-    public function ApplyChanges() {
-        parent::ApplyChanges();
         $this->RegisterVariableString("ResponseData", "ResponseData", "", -1);
         $this->RegisterVariableString("UID", "UID", "", 0);
         $this->RegisterVariableInteger("ReaderState", "ReaderState", "", 1);
-        //$this->CheckParent();
+        $this->ConnectParent("{2F75DC6B-F9AA-4A2E-B121-F76FBC365566}");
+        $this->RegisterTimer("Beep", 0, 'ADRA_Beep($_IPS[\'TARGET\']);');
     }
 
-    private function CheckParent() {
-        $result = $this->HasActiveParent();
-        if ($result) {
-            $instance = IPS_GetInstance($this->InstanceID);
-            $parentGUID = IPS_GetInstance($instance['ConnectionID'])['ModuleInfo']['ModuleID'];
-            if ($parentGUID != '{2F75DC6B-F9AA-4A2E-B121-F76FBC365566}') {
-                IPS_LogMessage('ArygonDevice', 'Parent not supported.');
-                $this->SetStatus(202);
-                $this->UpdateReaderState(ArygonDeviceState::Inactive);
-                $result = false;
-            } else {
-               $this->SetStatus(102); 
-               $this->UpdateReaderState(ArygonDeviceState::Idle);
-            }
-        }
-        return $result;
-    }
+	public function Destroy(){
+		//Never delete this line!
+		parent::Destroy();
+		
+	}
 
-    protected function HasActiveParent() {         
-        $instance = IPS_GetInstance($this->InstanceID);
-        if ($instance['ConnectionID'] > 0) {
-            $parent = IPS_GetInstance($instance['ConnectionID']);
-            if ($parent['InstanceStatus'] == 102) {
-                $this->UpdateReaderState(ArygonDeviceState::Idle);
-                return true;
-            } else {
-                $this->SetStatus(104);
-                $this->UpdateReaderState(ArygonDeviceState::Inactive);
-            }
-        } else { // No parent
-            $this->SetStatus(201);
-            $this->UpdateReaderState(ArygonDeviceState::Inactive);
-        }
-        IPS_LogMessage('ArygonDevice', 'No active parent.');
-        return false;
-    }
+    public function ApplyChanges() {
+        parent::ApplyChanges();
 
-    private function UpdateReaderState($state) {
-        $ReaderStateID = $this->GetIDForIdent('ReaderState');
-        SetValueInteger($ReaderStateID, $state);  
-    }
-
-    private function GetReaderState() {
-        $ReaderStateID = $this->GetIDForIdent('ReaderState');
-        return GetValueInteger($ReaderStateID);  
-    }
-
-    protected function GetVariable($Ident, $VarType, $VarName, $Profile, $EnableAction)
-    {
-        $VarID = @$this->GetIDForIdent($Ident);
-        if ($VarID > 0)
-        {
-            if (IPS_GetVariable($VarID)['VariableType'] <> $VarType)
-            {
-                IPS_DeleteVariable($VarID);
-                $VarID = false;
-            }
-        }
-        if ($VarID === false)
-        {
-            $this->MaintainVariable($Ident, $VarName, $VarType, $Profile, 0, true);
-            if ($EnableAction)
-                $this->MaintainAction($Ident, true);
-            $VarID = $this->GetIDForIdent($Ident);
-        }
-        return $VarID;
-    }
-
-    protected function SetStatus($InstanceStatus) {
-        if ($InstanceStatus <> IPS_GetInstance($this->InstanceID)['InstanceStatus']) {
-            parent::SetStatus($InstanceStatus);
-        }
-    }
-
-    protected function RegisterTimer($Name, $Interval, $Script) {
-        $id = @IPS_GetObjectIDByIdent($Name, $this->InstanceID);
-        if ($id === false)
-            $id = 0;
-
-
-        if ($id > 0)
-        {
-            if (!IPS_EventExists($id))
-                throw new Exception("Ident with name " . $Name . " is used for wrong object type", E_USER_NOTICE);
-
-            if (IPS_GetEvent($id)['EventType'] <> 1)
-            {
-                IPS_DeleteEvent($id);
-                $id = 0;
-            }
-        }
-
-        if ($id == 0)
-        {
-            $id = IPS_CreateEvent(1);
-            IPS_SetParent($id, $this->InstanceID);
-            IPS_SetIdent($id, $Name);
-        } IPS_SetName($id, $Name);
-        IPS_SetHidden($id, true);
-        IPS_SetEventScript($id, $Script);
-        if ($Interval > 0)
-        {
-            IPS_SetEventCyclic($id, 0, 0, 0, 0, 1, $Interval);
-
-            IPS_SetEventActive($id, true);
-        } else
-        {
-            IPS_SetEventCyclic($id, 0, 0, 0, 0, 1, 1);
-
-            IPS_SetEventActive($id, false);
-        }
-    }
-
-    protected function UnregisterTimer($Name)
-    {
-        $id = @IPS_GetObjectIDByIdent($Name, $this->InstanceID);
-        if ($id > 0)
-        {
-            if (!IPS_EventExists($id))
-                throw new Exception('Timer not present', E_USER_NOTICE);
-            IPS_DeleteEvent($id);
-        }
-    }
-
-    protected function SetTimerInterval($Name, $Interval)
-    {
-        $id = @IPS_GetObjectIDByIdent($Name, $this->InstanceID);
-        if ($id === false)
-            throw new Exception('Timer not present', E_USER_NOTICE);
-        if (!IPS_EventExists($id))
-            throw new Exception('Timer not present', E_USER_NOTICE);
-
-        $Event = IPS_GetEvent($id);
-
-        if ($Interval < 1)
-        {
-            if ($Event['EventActive'])
-                IPS_SetEventActive($id, false);
-        }
-        else
-        {
-            if
-            ($Event['CyclicTimeValue'] <> $Interval)
-                IPS_SetEventCyclic($id, 0, 0, 0, 0, 1, $Interval)
-                ;
-            if (!$Event['EventActive'])
-                IPS_SetEventActive($id, true);
-        }
     }
 
     // IPS raw data iterface for parent (splitter)
     public function ReceiveData($JSONString) {
+        
         $ResponseData = json_decode($JSONString);
-        //IPS_LogMessage('ArygonDevice', 'ReceiveData JSON: ' . $JSONString);
-        if ($ResponseData->DataID <> '{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}') {
-            return false;
-        }
 
         $Response = new ArygonResponseASCII();
         $Response->GetDataFromJSONObject($ResponseData);
@@ -193,7 +47,6 @@ class ArygonDevice extends IPSModule {
 
         if (!$this->lock('ResponseData')) {
             return false;
-            //throw new Exception('ResponseData is locked', E_USER_NOTICE);
         }
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         SetValueString($ResponseDataID, $Response->GetRawResponse());
@@ -210,16 +63,7 @@ class ArygonDevice extends IPSModule {
     // Reinitialize reader
     public function ResetReader() {
 
-        //$this->CheckParent();
-
-        //if($this->GetReaderState() <= ArygonDeviceState::Inactive) {
-        //    IPS_LogMessage('ArygonDevice', 'Module is inactive');
-        //    return false;
-        //}
-
-        if(!$this->StopContinuousBeep()) {
-            //return false;
-        }
+        $this->StopContinuousBeep());
 
         // Initiate uC software reset (TAMA is reset as well)
         $Command = new ArygonCommandASCII();
@@ -321,21 +165,11 @@ class ArygonDevice extends IPSModule {
     }
 
     public function StartContinuousBeep() {
-        try {
-            $this->RegisterTimer('Beep', 1, 'ADRA_Beep($_IPS[\'TARGET\']);');  
-            return true;
-        } catch (Exception $exc) {
-            return false;
-        }   
+        $this->SetTimerInterval("Beep", 1000);  
     }
 
     public function StopContinuousBeep() {
-        try {
-            $this->UnregisterTimer('Beep');
-            return true;
-        } catch (Exception $exc) {
-            return false;
-        }
+        $this->SetTimerInterval("Beep", 0);
     }
 
     public function DoubleBeep() {
@@ -371,9 +205,6 @@ class ArygonDevice extends IPSModule {
     }
 
     private function Send(ArygonCommandASCII $Command, $needResponse = true) {
-        //if (!$this->HasActiveParent()) {
-        //    throw new Exception("Instance has no active Parent.", E_USER_NOTICE);
-        //}
 
         $ResponseDataID = $this->GetIDForIdent('ResponseData');
         if (!$this->lock('RequestSendData')) {  
