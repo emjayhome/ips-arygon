@@ -8,7 +8,7 @@
         "Arygon ADRA Device"
     ],  
     "parentRequirements": ["{62096A8D-6F10-4E1D-A51F-0EDFD09DCF44}"],
-    "childRequirements": [""],
+    "childRequirements": [],
     "implemented": ["{35B444C9-CDC0-4F0F-BEBD-A5BDD29D07A4}"],
     "prefix": "ADRA"
 }
